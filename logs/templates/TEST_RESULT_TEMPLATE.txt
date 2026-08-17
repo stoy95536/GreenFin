@@ -1,0 +1,34 @@
+GREENFIN DEVELOPMENT TEST RECORD
+
+Gate:
+GATE-XX
+
+Timestamp:
+YYYY-MM-DDTHH:MM:SS+08:00
+
+Test Scope:
+[Scope]
+
+Commands:
+- [command]
+
+Tests Executed:
+- [test]
+
+Passed:
+0
+
+Failed:
+0
+
+Warnings:
+- None
+
+Functional Verification:
+NOT VERIFIED
+
+Known Issues:
+- None
+
+FINAL GATE STATUS:
+BLOCKED

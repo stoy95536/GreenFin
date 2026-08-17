@@ -1,0 +1,62 @@
+============================================================
+AI CHANGE RECORD
+============================================================
+
+Timestamp:
+YYYY-MM-DDTHH:MM:SS+08:00
+
+Agent:
+[AI Agent Name]
+
+Task:
+[Task description]
+
+Stage:
+[GATE-XX]
+
+Status:
+[COMPLETED / FAILED / BLOCKED]
+
+Summary:
+[What changed]
+
+Files Created:
+- None
+
+Files Modified:
+- None
+
+Files Deleted:
+- None
+
+Files Renamed / Moved:
+- None
+
+Database Changes:
+- None
+
+Business Rule Changes:
+- None
+
+API Changes:
+- None
+
+Tests Added:
+- None
+
+Tests Executed:
+- None
+
+Test Result:
+NOT EXECUTED
+
+Functional Verification:
+NOT VERIFIED
+
+Known Issues:
+- None
+
+Next Recommended Step:
+[Next step]
+
+============================================================

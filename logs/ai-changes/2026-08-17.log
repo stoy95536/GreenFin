@@ -1,0 +1,91 @@
+============================================================
+AI CHANGE RECORD
+============================================================
+
+Timestamp:
+2026-08-17T10:49:37+08:00
+
+Agent:
+ChatGPT — GPT-5.6 Sol
+
+Task:
+Bootstrap GreenFin GitHub repository governance structure and package source references.
+
+Stage:
+BOOTSTRAP-00 — Repository Governance Bootstrap
+
+Status:
+COMPLETED
+
+Summary:
+Created the initial GitHub-ready GreenFin repository structure, AI development rules,
+incremental Stage Gate testing policy, AI modification trace policy, product/domain/rule/
+architecture specifications, log templates, validation script, and copied available source
+reference documents into docs/reference/.
+
+Files Created:
+- .env.example
+- .gitignore
+- AGENTS.md
+- CHANGELOG.md
+- README.md
+- backend/README.md
+- docker-compose.yml
+- docs/API_SPEC.md
+- docs/ARCHITECTURE.md
+- docs/CURRENT_STAGE.md
+- docs/DECISIONS.md
+- docs/DEMO_SCENARIO.md
+- docs/DEVELOPMENT_PLAN.md
+- docs/DOMAIN_MODEL.md
+- docs/PRODUCT_SPEC.md
+- docs/RULES.md
+- docs/reference/README.md
+- docs/reference/專案介紹與AI討論指南.md
+- docs/reference/專案內容說明藍圖.pdf
+- docs/reference/提案計劃書.pdf
+- frontend/README.md
+- logs/templates/AI_CHANGE_LOG_TEMPLATE.txt
+- logs/templates/TEST_RESULT_TEMPLATE.txt
+- scripts/validate_repo.py
+- tests/README.md
+
+Files Modified:
+- None
+
+Files Deleted:
+- None
+
+Files Renamed / Moved:
+- None
+
+Database Changes:
+- None
+
+Business Rule Changes:
+- None. Existing Demo / PoC rules from the project materials were documented, not newly validated as banking standards.
+
+API Changes:
+- None. docs/API_SPEC.md is an initial design specification only.
+
+Tests Added:
+- scripts/validate_repo.py
+
+Tests Executed:
+- python scripts/validate_repo.py
+
+Test Result:
+PASS
+
+Functional Verification:
+Repository structure validation PASS.
+
+Known Issues:
+- Product source code has not started.
+- GATE-01 has not started.
+- Current business thresholds remain Demo / PoC initial parameters.
+
+Next Recommended Step:
+Start GATE-01 — Project Foundation only after reading AGENTS.md and required specs.
+
+============================================================

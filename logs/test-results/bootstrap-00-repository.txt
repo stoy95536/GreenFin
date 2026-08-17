@@ -1,0 +1,51 @@
+GREENFIN DEVELOPMENT TEST RECORD
+
+Gate:
+BOOTSTRAP-00 — Repository Governance Bootstrap
+
+Timestamp:
+2026-08-17T10:49:37+08:00
+
+Test Scope:
+Verify required repository governance files and critical AGENTS.md policies exist.
+
+Commands:
+- python scripts/validate_repo.py
+
+Tests Executed:
+- Required file existence check
+- AGENTS.md incremental development rule check
+- AGENTS.md Stage Gate rule check
+- AGENTS.md AI modification trace rule check
+- AGENTS.md architecture principle check
+
+Passed:
+1
+
+Failed:
+0
+
+Raw Output:
+Repository validation PASS.
+Checked 16 required files.
+AGENTS.md governance rules detected.
+Spreadsheet runtime warmup failed during python startup
+Traceback (most recent call last):
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/patches/warm_spreadsheet_runtime_on_startup.py", line 26, in warm_spreadsheet_runtime_on_startup
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/spreadsheet_warmup.py", line 785, in warm_spreadsheet_runtime
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/spreadsheet_warmup.py", line 720, in _warm_feature_flows
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/spreadsheet_warmup.py", line 704, in _warm_collaboration_flows
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/generated/interface/models.py", line 32317, in hydrate_crdt_from_proto
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/rpc/remote.py", line 749, in __call__
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/rpc/client.py", line 150, in call
+artifact_tool.rpc.client.RemoteError: hydrateCrdtFromProto requires an empty collaborative document.
+
+Functional Verification:
+PASS
+
+Known Issues:
+- No product runtime functionality exists yet.
+- This result does not imply GATE-01 PASS.
+
+FINAL GATE STATUS:
+PASS

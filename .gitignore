@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+
+# Keep example
+!.env.example
+
+# Runtime logs are generally ignored...
+*.log
+
+# ...but AI change logs are explicitly version controlled.
+!logs/
+!logs/ai-changes/
+!logs/ai-changes/*.log
+
+# Keep test result text evidence
+!logs/test-results/
+!logs/test-results/*.txt
+
+# Local DB / artifacts
+*.sqlite
+*.sqlite3
+*.db
+coverage/
+htmlcov/

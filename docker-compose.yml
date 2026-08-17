@@ -1,0 +1,15 @@
+services:
+  # Placeholder for future implementation.
+  # Do not claim this stack is operational until GATE-01 tests pass.
+  backend:
+    image: python:3.12-slim
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    command: ["sh", "-c", "echo 'Backend not implemented yet. See docs/CURRENT_STAGE.md.'"]
+  frontend:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    command: ["sh", "-c", "echo 'Frontend not implemented yet. See docs/CURRENT_STAGE.md.'"]
