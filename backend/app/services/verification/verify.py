@@ -16,8 +16,7 @@ Per AGENTS.md §10:
 Each VerificationResult must preserve reason.
 """
 
-from datetime import date, datetime
-
+from backend.app.core.dates import is_expired
 from backend.app.models import (
     Document,
     SourceLevel,
@@ -30,6 +29,7 @@ from backend.app.repositories import (
     get_standardized_record_repo,
     get_verification_repo,
 )
+from backend.app.services import audit
 
 
 def verify_record(record: StandardizedRecord) -> VerificationResult:
@@ -81,14 +81,9 @@ def verify_record(record: StandardizedRecord) -> VerificationResult:
 
     # Check 2: Expiry — look for date fields that are in the past
     expiry_value = record.data.get("有效期限") or record.data.get("expiry")
-    if expiry_value:
-        try:
-            expiry_date = _parse_date(expiry_value)
-            if expiry_date and expiry_date < date.today():
-                determined_level = SourceLevel.V0
-                reasons.append(f"文件已過期: {expiry_value}")
-        except (ValueError, TypeError):
-            pass
+    if is_expired(expiry_value):
+        determined_level = SourceLevel.V0
+        reasons.append(f"文件已過期: {expiry_value}")
 
     # Check 3: Record not valid → V0
     if not record.is_valid:
@@ -120,6 +115,12 @@ def verify_record(record: StandardizedRecord) -> VerificationResult:
     )
     ver_repo.create(result)
 
+    audit.verification_updated(
+        record_id=record.id,
+        source_level=determined_level.value,
+        reason=result.reason,
+    )
+
     return result
 
 
@@ -138,13 +139,3 @@ def verify_document_records(document_id: str) -> list[VerificationResult]:
         results.append(result)
 
     return results
-
-
-def _parse_date(value: str) -> date | None:
-    """Try to parse a date string in various formats."""
-    for fmt in ("%Y-%m-%d", "%Y/%m/%d", "%Y.%m.%d"):
-        try:
-            return datetime.strptime(value, fmt).date()
-        except ValueError:
-            continue
-    return None

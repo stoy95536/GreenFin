@@ -20,12 +20,19 @@ def test_settings_app_name():
     assert settings.APP_NAME == "GreenFin"
 
 
-def test_settings_database_url():
-    """DATABASE_URL should be set (test override or default)."""
-    # In test, we override to test db, but the settings object should have a value
+def test_no_database_url_setting():
+    """
+    Storage is JSON file-based (ADR-0006/ADR-0007), so there must be no DATABASE_URL
+    setting implying a SQL backend exists.
+    """
     from backend.app.core.config import settings
-    assert settings.DATABASE_URL is not None
-    assert len(settings.DATABASE_URL) > 0
+    assert not hasattr(settings, "DATABASE_URL")
+
+
+def test_data_directory_is_resolvable():
+    """The active data directory must always resolve to a concrete path."""
+    from backend.app.core.storage import get_data_dir
+    assert get_data_dir() is not None
 
 
 def test_settings_demo_mode():

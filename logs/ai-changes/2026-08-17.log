@@ -971,3 +971,385 @@ Next Recommended Step:
 Start GATE-11 — Bank Workflow
 
 ============================================================
+
+============================================================
+AI CHANGE RECORD
+============================================================
+
+Timestamp:
+2026-08-17T16:00:00+08:00
+
+Agent:
+Kiro (Claude) — GreenFin IDE Session
+
+Task:
+GATE-11 — Bank Workflow
+
+Stage:
+GATE-11
+
+Status:
+COMPLETED
+
+Summary:
+Implemented bank-facing workflow with case list, case detail (full analysis view),
+evidence chain viewer, and single-record trace endpoint. All bank endpoints are
+protected by authorization guard (403 on unauthorized access). Added bank frontend
+pages (case list, case detail with indicators/data health/anomalies, evidence
+explorer). Added link between farmer and bank views. All 319 tests pass.
+
+Files Created:
+- backend/app/api/bank.py
+- backend/tests/test_gate11_bank.py
+- frontend/src/pages/bank/BankCases.tsx
+- frontend/src/pages/bank/BankCaseDetail.tsx
+- frontend/src/pages/bank/BankEvidence.tsx
+- frontend/src/components/BankLayout.tsx
+
+Files Modified:
+- backend/app/main.py (registered bank_router)
+- frontend/src/App.tsx (added bank routes)
+- frontend/src/components/Layout.tsx (added bank link in sidebar)
+
+Files Deleted:
+- None
+
+API Changes:
+- GET /api/bank/{id}/cases — list authorized cases
+- GET /api/bank/{id}/cases/{farmer_id} — full case detail (guarded)
+- GET /api/bank/{id}/cases/{farmer_id}/evidence — evidence chain (guarded)
+- GET /api/bank/{id}/cases/{farmer_id}/trace/{record_id} — single record trace (guarded)
+
+Tests Added:
+- backend/tests/test_gate11_bank.py (9 tests)
+
+Test Result:
+319 passed in 18.82s
+
+Known Issues:
+- None blocking
+
+Next Recommended Step:
+Start GATE-12 — Traceability
+
+============================================================
+
+============================================================
+AI CHANGE RECORD
+============================================================
+
+Timestamp:
+2026-08-17T16:30:00+08:00
+
+Agent:
+Kiro (Claude) — GreenFin IDE Session
+
+Task:
+GATE-12 — Traceability
+
+Stage:
+GATE-12
+
+Status:
+COMPLETED
+
+Summary:
+Implemented traceability service that validates end-to-end evidence chains:
+Result → Calculation → Rule Version → Structured Record → Extracted Fields → Original Document.
+Covers experience transactions, four indicators, and data health results.
+Added validate_farmer_traceability for full farmer-wide chain validation.
+API endpoints for tracing individual calculations and full validation.
+All 335 tests pass.
+
+Files Created:
+- backend/app/services/traceability.py
+- backend/app/api/traceability.py
+- backend/tests/test_gate12_traceability.py
+
+Files Modified:
+- backend/app/main.py (registered traceability_router)
+
+API Changes:
+- GET /api/traceability/experience/{transaction_id}
+- GET /api/traceability/indicator/{farmer_id}/{indicator_type}
+- GET /api/traceability/data-health/{farmer_id}/{domain}
+- GET /api/traceability/validate/{farmer_id}
+
+Tests Added:
+- backend/tests/test_gate12_traceability.py (16 tests)
+
+Test Result:
+335 passed in 18.89s
+
+Known Issues:
+- None blocking
+
+Next Recommended Step:
+Start GATE-13 — Report (Bank Information Package)
+
+============================================================
+
+============================================================
+AI CHANGE RECORD
+============================================================
+
+Timestamp:
+2026-08-17T17:00:00+08:00
+
+Agent:
+Kiro (Claude) — GreenFin IDE Session
+
+Task:
+GATE-13 — Report (Bank Information Package)
+
+Stage:
+GATE-13
+
+Status:
+COMPLETED
+
+Summary:
+Implemented Bank Information Package generation — the primary deliverable for banks.
+Package includes: authorization verification, farmer profile, experience summary,
+four indicators with rule versions, data health per domain, evidence summary,
+traceability validation, timestamp, and mandatory disclaimer.
+Unauthorized access returns 403. All 350 tests pass.
+
+Files Created:
+- backend/app/services/reports/package.py
+- backend/app/api/reports.py
+- backend/tests/test_gate13_report.py
+
+Files Modified:
+- backend/app/main.py (registered reports_router)
+
+API Changes:
+- GET /api/reports/bank-package/{institution_id}/{farmer_id}
+
+Tests Added:
+- backend/tests/test_gate13_report.py (15 tests)
+
+Test Result:
+350 passed in 19.78s
+
+Known Issues:
+- None blocking
+
+Next Recommended Step:
+Start GATE-14 — Full Demo Regression
+
+============================================================
+
+============================================================
+AI CHANGE RECORD
+============================================================
+
+Timestamp:
+2026-08-17T17:30:00+08:00
+
+Agent:
+Kiro (Claude) — GreenFin IDE Session
+
+Task:
+GATE-14 — Full Demo Regression
+
+Stage:
+GATE-14
+
+Status:
+COMPLETED — DEMO READY
+
+Summary:
+Executed comprehensive end-to-end regression test covering the complete Primary
+Demo Story: Farmer uploads evidence → OCR → Human confirmation → Normalization →
+Verification → Anomaly detection → Data Health → Experience → Indicators →
+Authorization → Bank opens case → Reviews analysis → Traces evidence → Generates
+Bank Information Package. Also tested: unauthorized access denied (403), revoked
+authorization denied, duplicate prevention, three demo cases (A healthy, B needs
+improvement, C abnormal). All 359 tests pass. GreenFin Demo is READY.
+
+Files Created:
+- backend/tests/test_gate14_full_regression.py
+
+Files Modified:
+- None
+
+Test Result:
+359 passed in 18.61s
+
+Functional Verification:
+Complete demo flow verified via automated test:
+1. Upload → OCR → 200 (fields extracted)
+2. Confirm → 200 (FIELDS_CONFIRMED)
+3. Normalize → 200 (StandardizedRecord created)
+4. Verify → 200 (VERIFIED, anomalies checked)
+5. Data Health → 200 (CERTIFICATION = GREEN)
+6. Experience → 200 (CERTIFIED base=100, effective>0)
+7. Indicators → 200 (4 independent indicators)
+8. Traceability → 200 (all_valid=true)
+9. Authorization → 200 (bank granted access)
+10. Bank Cases → 200 (case_count=1, farmer_name=陳小農)
+11. Bank Detail → 200 (full analysis + disclaimer)
+12. Bank Evidence → 200 (document chain)
+13. Bank Package → 200 (complete information package)
+14. Unauthorized → 403 (access denied)
+15. Revoked → 403 (access denied after revocation)
+
+FINAL STATUS:
+ALL 14 GATES PASS — DEMO READY
+
+============================================================
+
+============================================================
+AI CHANGE RECORD
+============================================================
+
+Timestamp:
+2026-08-17T18:30:00+08:00
+
+Agent:
+Kiro (Claude) — GreenFin IDE Session
+
+Task:
+Architecture review remediation (P0-P6, excluding authentication by user decision)
+
+Stage:
+POST-GATE-14 — Architecture Hardening
+
+Status:
+COMPLETED
+
+Summary:
+Acted on a full architectural review. Fixed two confirmed defects (test isolation
+destroying demo data; non-atomic writes), two governance violations (indicators not
+rule-driven; duplicated rule config), one correctness risk (three divergent date
+parsers), removed a dead SQLAlchemy/Alembic layer, implemented the specified-but-absent
+audit trail, typed and consolidated the frontend, and added CI. Authentication was
+explicitly deferred by the user as out of scope for the Demo.
+
+Two additional defects were found *during* verification and also fixed:
+- GET /api/farmers/{id}/indicators omitted calculation_trace, so the UI could show a
+  score but never its explanation (contradicts AGENTS.md §6).
+- Tailwind content globs were CWD-relative, so building from the repo root shipped a
+  bundle with no styles (CSS 4.9 kB → 17.86 kB after the fix).
+- Also fixed: seed script crashed when stdout was piped on Windows (cp950 codec).
+
+Files Created:
+- backend/app/core/storage.py
+- backend/app/core/dates.py
+- backend/app/services/audit.py
+- backend/app/api/audit.py
+- backend/tests/test_regression_data_isolation.py
+- backend/tests/test_regression_rule_driven.py
+- backend/tests/test_regression_audit_trail.py
+- frontend/src/types.ts
+- .github/workflows/tests.yml
+
+Files Modified:
+- backend/app/repositories/json_repository.py (lazy dir resolution, atomic mutations)
+- backend/app/repositories/__init__.py (export get_data_dir/set_data_dir)
+- backend/app/rules/engine.py (full IndicatorRules params + level_for())
+- backend/app/services/indicators/calculate.py (zero hardcoded constants; audit)
+- backend/app/services/anomaly/detect.py (rule-driven required fields; shared dates; audit)
+- backend/app/services/data_health/calculate.py (shared dates; audit)
+- backend/app/services/verification/verify.py (shared dates; audit)
+- backend/app/services/experience/calculate.py (audit)
+- backend/app/services/documents/upload.py (audit)
+- backend/app/services/documents/extraction.py (audit)
+- backend/app/services/authorization/service.py (audit)
+- backend/app/services/reports/package.py (audit)
+- backend/app/api/bank.py (bank access audit)
+- backend/app/api/authorization.py (bank access audit)
+- backend/app/api/indicators.py (expose calculation_trace)
+- backend/app/api/experience.py (new POST /recalculate-all)
+- backend/app/api/health.py (use get_data_dir)
+- backend/app/main.py (audit router; get_data_dir)
+- backend/app/core/config.py (remove DATABASE_URL; host 127.0.0.1)
+- backend/app/seed/seed_data.py (UTF-8 stdout; full indicator config; get_data_dir)
+- backend/tests/conftest.py (working isolation via set_data_dir, autouse)
+- backend/tests/test_gate01_config.py, test_gate01_database.py, test_gate07_api.py
+- backend/requirements.txt (drop sqlalchemy/alembic/aiosqlite/pytest-asyncio)
+- backend/.env, .env.example
+- frontend/src/api.ts (fully typed, ApiError, DEMO_INSTITUTION_ID, processDocument)
+- frontend/src/pages/{Dashboard,Documents,Experience,Indicators,DataHealth}.tsx
+- frontend/src/pages/bank/{BankCases,BankCaseDetail,BankEvidence}.tsx
+- frontend/src/components/BankLayout.tsx (remove unused binding)
+- frontend/tailwind.config.js (config-anchored content globs)
+- docs/DECISIONS.md (ADR-0007 … ADR-0010)
+
+Files Deleted:
+- backend/app/core/database.py
+- backend/alembic.ini
+- backend/alembic/env.py
+- backend/alembic/script.py.mako
+- backend/alembic/versions/001_initial.py
+- backend/alembic/versions/__init__.py
+- backend/tests/test_gate01_migration.py
+- backend/app/schemas/__init__.py
+- backend/app/services/normalization/__init__.py
+
+Database Changes:
+- Storage contract unchanged (JSON), but writes are now atomic (temp file + os.replace)
+  and the read-modify-write cycle holds a per-path lock.
+- Data directory resolution centralised in core/storage.py.
+
+Business Rule Changes:
+- Indicator weights, coefficients, caps and L1-L5 bands moved from code into the
+  GREENFIN_DEMO_V1 rule config. Numeric behaviour of the demo parameters is unchanged;
+  what changed is that the config now actually drives the result.
+- Anomaly required-field checks now read the same config as Data Health (single source).
+- Date parsing unified: data_health previously rejected "YYYY.MM.DD" that anomaly
+  detection accepted, so identical data could yield different verdicts. Now consistent.
+
+API Changes:
+- POST /api/farmers/{id}/recalculate-all (server-side orchestration of the three
+  recalculations, in dependency order)
+- GET /api/audit, GET /api/audit/event-types
+- GET /api/farmers/{id}/indicators now includes calculation_trace
+
+Tests Added:
+- test_regression_data_isolation.py (7 tests)
+- test_regression_rule_driven.py (6 tests)
+- test_regression_audit_trail.py (17 tests)
+- test_gate07_api.py explainability tests (2)
+- test_gate01_database.py lazy-file-creation tests (2), test_gate01_config.py (2)
+
+Tests Removed:
+- test_gate01_migration.py (5 tests validating deleted dead Alembic scaffolding)
+
+Tests Executed:
+- python -m pytest backend/tests/ tests/ -q
+
+Test Result:
+386 passed, 0 failed
+
+Functional Verification:
+Live server on 127.0.0.1:8011, 27/27 checks passed:
+- health, seeded data (18 files, 3 farmers), only GREENFIN_DEMO_V1 present
+- indicator rules expose weights + thresholds
+- recalculate-all returns 4 indicators with correct rule version
+- all indicator traces cite the rule version
+- 7 Data Health domains, traceability all_valid=true
+- audit populated: EXPERIENCE_RECALCULATED, INDICATOR_RECALCULATED,
+  DATA_HEALTH_UPDATED, BANK_DATA_ACCESSED
+- authorized bank 200, unauthorized bank 403
+- bank package 200 with valid traceability and disclaimer
+- document pipeline upload → OCR → confirm → normalize → verify, duplicate rejected 400
+
+Isolation verified independently: a full 386-test run leaves backend/data/
+rule_sets.json as ['GREENFIN_DEMO_V1'] and users.json at 4 records.
+Frontend: tsc strict build clean; CSS bundle 17.86 kB containing the custom theme.
+
+Known Issues / Deliberately Not Addressed:
+- NO AUTHENTICATION. institution_id and farmer_id are caller-supplied path parameters,
+  so any client can claim to be any bank or farmer. The guard proves authorization
+  exists, not caller identity. Deferred by user decision as acceptable for Demo scope.
+  Must not be described to financial institutions as implemented access control.
+- Storage write lock is per-process only (see ADR-0009).
+- Repository reads still parse whole files; fine at Demo volume, not beyond.
+
+Next Recommended Step:
+If the Demo is shown externally, add authentication (session or API key) and record the
+authenticated principal as the audit actor instead of trusting path parameters.
+
+============================================================

@@ -1,0 +1,122 @@
+name: Tests
+
+# Runs the full suite on every push and PR so regressions surface automatically,
+# rather than only when someone remembers to run pytest locally.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  backend:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt
+
+      - name: Run backend test suite
+        run: python -m pytest backend/tests/ -q
+
+      - name: Verify demo seed data is intact
+        # The suite must never write into backend/data/. If test isolation regresses,
+        # the seeded rule version disappears and this step fails.
+        run: |
+          python - <<'PY'
+          import json, sys
+          from pathlib import Path
+
+          path = Path("backend/data/rule_sets.json")
+          if not path.exists():
+              sys.exit("backend/data/rule_sets.json is missing — tests deleted seed data")
+
+          versions = [r["version"] for r in json.loads(path.read_text(encoding="utf-8"))]
+          if versions != ["GREENFIN_DEMO_V1"]:
+              sys.exit(f"Seed data was modified by the test suite: {versions}")
+
+          print("Seed data intact:", versions)
+          PY
+
+  frontend:
+    name: Frontend build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Type-check and build
+        run: npm run build
+        working-directory: frontend
+
+      - name: Verify Tailwind styles were emitted
+        # A CWD/config mistake can make Tailwind match no files and ship a bundle with
+        # no styles. Guard the byte size so that failure is loud instead of visual.
+        run: |
+          python3 - <<'PY'
+          import sys
+          from pathlib import Path
+
+          assets = Path("frontend/dist/assets")
+          css_files = list(assets.glob("*.css"))
+          if not css_files:
+              sys.exit("No CSS emitted in the production bundle")
+
+          size = css_files[0].stat().st_size
+          if size < 10_000:
+              sys.exit(f"CSS bundle suspiciously small ({size} bytes) — Tailwind likely matched no files")
+
+          print(f"CSS bundle OK: {css_files[0].name} ({size} bytes)")
+          PY
+
+  frontend-tests:
+    name: Frontend contract tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install backend dependencies
+        run: pip install -r backend/requirements.txt
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build frontend (required by build-artifact tests)
+        run: npm run build
+        working-directory: frontend
+
+      - name: Run frontend build verification tests
+        run: python -m pytest tests/ -q

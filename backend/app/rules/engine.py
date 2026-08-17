@@ -42,12 +42,63 @@ class ExperienceRules:
 
 @dataclass
 class IndicatorRules:
-    """Indicator calculation rules per RULES.md §4."""
-    completeness_weights: dict[str, int]  # priority → weight
+    """
+    Indicator calculation rules per RULES.md §4.
+
+    Every number the four indicator calculations use must come from here, so that
+    editing the rule set actually changes the results. Previously the calculators
+    hardcoded their weights and thresholds while still stamping results with a
+    rule_version, which made the provenance misleading.
+    """
+
+    # Tier weights and which tier each data domain belongs to (資料完整度)
+    completeness_weights: dict[str, int]          # tier name → weight
+    completeness_domain_tiers: dict[str, str]     # domain → tier name
+
+    # 資料可信度 scoring
     credibility_factors: list[str]
+    credibility_source_scores: dict[str, int]     # V0..V3 → 0..100
+    credibility_anomaly_penalty_per: int
+    credibility_anomaly_penalty_max: int
+    credibility_traceability_bonus_max: int
+
+    # 經營成熟度 scoring
     maturity_factors: list[str]
+    maturity_variety_max: int
+    maturity_volume_max: int
+    maturity_volume_saturation_records: int
+    maturity_document_max: int
+    maturity_document_saturation_count: int
+    maturity_transaction_bonus: int
+
+    # 綠色成熟度 scoring
     green_maturity_factors: list[str]
-    level_thresholds: dict[str, list[list[int]]]  # indicator → [[min,max],...]
+    green_experience_max: int
+    green_breadth_per_dimension: int
+    green_quality_max: int
+
+    # indicator → [[min,max], ...] ordered L1..L5
+    level_thresholds: dict[str, list[list[int]]]
+
+    def level_for(self, indicator_type: str, score: float) -> str:
+        """
+        Map a 0-100 score to an L1..L5 label using the configured bands.
+
+        Falls back to the highest band whose lower bound the score reaches, so a
+        config with gaps still yields a deterministic level.
+        """
+        bands = self.level_thresholds.get(indicator_type)
+        if not bands:
+            return "L1"
+
+        level = "L1"
+        for index, band in enumerate(bands, start=1):
+            if not band:
+                continue
+            lower = band[0]
+            if score >= lower:
+                level = f"L{index}"
+        return level
 
 
 @dataclass
@@ -138,29 +189,74 @@ class RuleEngine:
         )
 
     def get_indicator_rules(self) -> IndicatorRules:
-        """Get typed indicator calculation rules."""
+        """
+        Get typed indicator calculation rules.
+
+        Defaults mirror the GREENFIN_DEMO_V1 parameters so a partially-specified
+        config still produces a complete, explicit rule object.
+        """
         ind = self.config.get("indicators", {})
+        completeness = ind.get("completeness", {})
+        credibility = ind.get("credibility", {})
+        maturity = ind.get("business_maturity", {})
+        green = ind.get("green_maturity", {})
+
+        default_bands = [[0, 19], [20, 39], [40, 59], [60, 79], [80, 100]]
+
         return IndicatorRules(
-            completeness_weights=ind.get("completeness_weights", {
-                "core_required": 3,
-                "important_supporting": 2,
-                "supplementary": 1,
+            # 資料完整度
+            completeness_weights=ind.get("completeness_weights") or completeness.get(
+                "tier_weights",
+                {"core_required": 3, "important_supporting": 2, "supplementary": 1},
+            ),
+            completeness_domain_tiers=completeness.get("domain_tiers", {
+                "IDENTITY": "core_required",
+                "LAND_CROP": "core_required",
+                "TRANSACTION": "important_supporting",
+                "CERTIFICATION": "important_supporting",
+                "GREEN_ACTION": "important_supporting",
+                "INPUT_EQUIPMENT": "supplementary",
+                "LOAN_PURPOSE": "supplementary",
             }),
+
+            # 資料可信度
             credibility_factors=ind.get("credibility_factors", [
                 "source_level", "expiry", "cross_consistency",
                 "duplicates", "anomalies", "traceability",
             ]),
+            credibility_source_scores=credibility.get(
+                "source_level_scores", {"V0": 0, "V1": 33, "V2": 67, "V3": 100}
+            ),
+            credibility_anomaly_penalty_per=credibility.get("anomaly_penalty_per", 5),
+            credibility_anomaly_penalty_max=credibility.get("anomaly_penalty_max", 30),
+            credibility_traceability_bonus_max=credibility.get("traceability_bonus_max", 10),
+
+            # 經營成熟度
             maturity_factors=ind.get("maturity_factors", [
                 "record_period", "data_variety", "update_continuity",
                 "missing_months", "cross_validation",
             ]),
+            maturity_variety_max=maturity.get("variety_max", 40),
+            maturity_volume_max=maturity.get("volume_max", 30),
+            maturity_volume_saturation_records=maturity.get("volume_saturation_records", 20),
+            maturity_document_max=maturity.get("document_max", 20),
+            maturity_document_saturation_count=maturity.get("document_saturation_count", 10),
+            maturity_transaction_bonus=maturity.get("transaction_bonus", 10),
+
+            # 綠色成熟度
             green_maturity_factors=ind.get("green_maturity_factors", [
                 "experience_value", "dimension_breadth", "duration",
                 "v2_v3_ratio", "anomalies",
             ]),
+            green_experience_max=green.get("experience_max", 40),
+            green_breadth_per_dimension=green.get("breadth_per_dimension", 10),
+            green_quality_max=green.get("quality_max", 20),
+
             level_thresholds=ind.get("level_thresholds", {
                 "completeness": [[0, 39], [40, 59], [60, 79], [80, 94], [95, 100]],
-                "credibility": [[0, 19], [20, 39], [40, 59], [60, 79], [80, 100]],
+                "credibility": default_bands,
+                "business_maturity": default_bands,
+                "green_maturity": default_bands,
             }),
         )
 

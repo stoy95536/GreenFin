@@ -22,11 +22,25 @@ def test_data_directory_accessible(test_data_dir):
     assert test_data_dir.is_dir()
 
 
-def test_json_file_creation(test_data_dir):
-    """Repository should create JSON file on init."""
+def test_json_file_created_on_first_write(test_data_dir):
+    """
+    Repository creates its JSON file on first write, not on construction.
+
+    Construction is intentionally side-effect free so that resolving a repository
+    never touches the filesystem (and never creates files in the wrong directory).
+    """
     repo = get_user_repo()
-    # The file should exist after repo init
+    repo.clear()
     assert repo.file_path.exists()
+
+
+def test_reads_work_before_file_exists(test_data_dir):
+    """Reading a repository whose file does not exist yet returns empty, not an error."""
+    repo = get_user_repo()
+    if repo.file_path.exists():
+        repo.file_path.unlink()
+    assert repo.get_all() == []
+    assert repo.count() == 0
 
 
 def test_repository_basic_write_read(test_data_dir):

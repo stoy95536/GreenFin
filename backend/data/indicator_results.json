@@ -1,351 +1,202 @@
 [
   {
-    "id": "8200d9bc-b562-49e3-8f14-aba37cfe6f30",
-    "created_at": "2026-08-17T05:02:47.464488+00:00",
-    "updated_at": null,
-    "farmer_id": "farmer-b-lin",
-    "indicator_type": "completeness",
-    "score": 14.3,
-    "level": "L1",
-    "details": {
-      "IDENTITY": {
-        "has_data": false,
-        "weight": 3
-      },
-      "LAND_CROP": {
-        "has_data": false,
-        "weight": 3
-      },
-      "TRANSACTION": {
-        "has_data": false,
-        "weight": 2
-      },
-      "CERTIFICATION": {
-        "has_data": false,
-        "weight": 2
-      },
-      "GREEN_ACTION": {
-        "has_data": true,
-        "weight": 2
-      },
-      "INPUT_EQUIPMENT": {
-        "has_data": false,
-        "weight": 1
-      },
-      "LOAN_PURPOSE": {
-        "has_data": false,
-        "weight": 1
-      }
-    },
-    "rule_version": "GREENFIN_DEMO_V1",
-    "calculated_at": "2026-08-17T05:02:47.464467+00:00",
-    "input_evidence_ids": [
-      "rec-b1-activity"
-    ],
-    "calculation_trace": "Domains covered: 1/7, weighted score: 2/14 = 14.3%"
-  },
-  {
-    "id": "611cd209-ceb7-4391-8cb2-8d3c4d5424da",
-    "created_at": "2026-08-17T05:02:47.465314+00:00",
-    "updated_at": null,
-    "farmer_id": "farmer-b-lin",
-    "indicator_type": "credibility",
-    "score": 43.0,
-    "level": "L3",
-    "details": {
-      "source_avg": 33.0,
-      "anomaly_penalty": 0,
-      "traceability_bonus": 10.0,
-      "record_count": 1,
-      "unresolved_anomalies": 0
-    },
-    "rule_version": "GREENFIN_DEMO_V1",
-    "calculated_at": "2026-08-17T05:02:47.465298+00:00",
-    "input_evidence_ids": [
-      "rec-b1-activity"
-    ],
-    "calculation_trace": "source_avg=33.0 - anomaly_penalty=0 + traceability_bonus=10.0 = 43.0"
-  },
-  {
-    "id": "2d69b972-1f50-4b57-928a-90faff8f1ca4",
-    "created_at": "2026-08-17T05:02:47.466008+00:00",
-    "updated_at": null,
-    "farmer_id": "farmer-b-lin",
-    "indicator_type": "business_maturity",
-    "score": 14.7,
-    "level": "L1",
-    "details": {
-      "domains_covered": 1,
-      "record_count": 1,
-      "document_count": 1,
-      "has_transactions": false,
-      "variety_score": 5.7,
-      "volume_score": 6.9,
-      "doc_score": 2.0
-    },
-    "rule_version": "GREENFIN_DEMO_V1",
-    "calculated_at": "2026-08-17T05:02:47.465993+00:00",
-    "input_evidence_ids": [
-      "rec-b1-activity"
-    ],
-    "calculation_trace": "variety=5.7 + volume=6.9 + docs=2.0 + txn_bonus=0 = 14.7"
-  },
-  {
-    "id": "5ea4a708-1028-4ad0-a7d9-2906e0982786",
-    "created_at": "2026-08-17T05:02:47.466932+00:00",
-    "updated_at": null,
-    "farmer_id": "farmer-b-lin",
-    "indicator_type": "green_maturity",
-    "score": 10.4,
-    "level": "L1",
-    "details": {
-      "total_experience": 10.0,
-      "active_dimensions": 1,
-      "green_record_count": 1,
-      "v2_v3_ratio": 0.0,
-      "exp_score": 0.4,
-      "breadth_score": 10,
-      "quality_score": 0.0
-    },
-    "rule_version": "GREENFIN_DEMO_V1",
-    "calculated_at": "2026-08-17T05:02:47.466918+00:00",
-    "input_evidence_ids": [
-      "exp-b1"
-    ],
-    "calculation_trace": "exp_contribution=0.4 + breadth=10 + quality=0.0 = 10.4"
-  },
-  {
-    "id": "90f56def-83bb-44a7-8257-b63332563f72",
-    "created_at": "2026-08-17T05:02:49.026894+00:00",
-    "updated_at": null,
-    "farmer_id": "farmer-c-wang",
-    "indicator_type": "completeness",
-    "score": 0.0,
-    "level": "L1",
-    "details": {
-      "IDENTITY": {
-        "has_data": false,
-        "weight": 3
-      },
-      "LAND_CROP": {
-        "has_data": false,
-        "weight": 3
-      },
-      "TRANSACTION": {
-        "has_data": false,
-        "weight": 2
-      },
-      "CERTIFICATION": {
-        "has_data": false,
-        "weight": 2
-      },
-      "GREEN_ACTION": {
-        "has_data": false,
-        "weight": 2
-      },
-      "INPUT_EQUIPMENT": {
-        "has_data": false,
-        "weight": 1
-      },
-      "LOAN_PURPOSE": {
-        "has_data": false,
-        "weight": 1
-      }
-    },
-    "rule_version": "GREENFIN_DEMO_V1",
-    "calculated_at": "2026-08-17T05:02:49.026873+00:00",
-    "input_evidence_ids": [],
-    "calculation_trace": "Domains covered: 0/7, weighted score: 0/14 = 0.0%"
-  },
-  {
-    "id": "26cf81c8-6e88-4c2a-803c-21956dae3d07",
-    "created_at": "2026-08-17T05:02:49.027643+00:00",
-    "updated_at": null,
-    "farmer_id": "farmer-c-wang",
-    "indicator_type": "credibility",
-    "score": 0.0,
-    "level": "L1",
-    "details": {
-      "source_avg": 0.0,
-      "anomaly_penalty": 15,
-      "traceability_bonus": 10.0,
-      "record_count": 2,
-      "unresolved_anomalies": 3
-    },
-    "rule_version": "GREENFIN_DEMO_V1",
-    "calculated_at": "2026-08-17T05:02:49.027630+00:00",
-    "input_evidence_ids": [
-      "rec-c1-expired-cert",
-      "rec-c2-duplicate"
-    ],
-    "calculation_trace": "source_avg=0.0 - anomaly_penalty=15 + traceability_bonus=10.0 = 0.0"
-  },
-  {
-    "id": "70a1be9f-49ba-4070-852c-4cef7fcf9aee",
-    "created_at": "2026-08-17T05:02:49.028250+00:00",
-    "updated_at": null,
-    "farmer_id": "farmer-c-wang",
-    "indicator_type": "business_maturity",
-    "score": 20.7,
-    "level": "L2",
-    "details": {
-      "domains_covered": 1,
-      "record_count": 2,
-      "document_count": 2,
-      "has_transactions": false,
-      "variety_score": 5.7,
-      "volume_score": 11.0,
-      "doc_score": 4.0
-    },
-    "rule_version": "GREENFIN_DEMO_V1",
-    "calculated_at": "2026-08-17T05:02:49.028238+00:00",
-    "input_evidence_ids": [
-      "rec-c1-expired-cert",
-      "rec-c2-duplicate"
-    ],
-    "calculation_trace": "variety=5.7 + volume=11.0 + docs=4.0 + txn_bonus=0 = 20.7"
-  },
-  {
-    "id": "14495370-073d-4a4b-88db-3b003bfcf534",
-    "created_at": "2026-08-17T05:02:49.029097+00:00",
-    "updated_at": null,
-    "farmer_id": "farmer-c-wang",
-    "indicator_type": "green_maturity",
-    "score": 0.0,
-    "level": "L1",
-    "details": {
-      "total_experience": 0.0,
-      "active_dimensions": 0,
-      "green_record_count": 0,
-      "v2_v3_ratio": 0,
-      "exp_score": 0.0,
-      "breadth_score": 0,
-      "quality_score": 0
-    },
-    "rule_version": "GREENFIN_DEMO_V1",
-    "calculated_at": "2026-08-17T05:02:49.029083+00:00",
-    "input_evidence_ids": [
-      "exp-c1"
-    ],
-    "calculation_trace": "exp_contribution=0.0 + breadth=0 + quality=0.0 = 0.0"
-  },
-  {
-    "id": "932d858a-b553-41c9-b9c9-aea627903f03",
-    "created_at": "2026-08-17T05:02:52.108493+00:00",
+    "id": "ind-a-completeness",
+    "created_at": "2026-08-17T07:33:57.975769+00:00",
     "updated_at": null,
     "farmer_id": "farmer-a-chen",
     "indicator_type": "completeness",
-    "score": 28.6,
-    "level": "L1",
-    "details": {
-      "IDENTITY": {
-        "has_data": false,
-        "weight": 3
-      },
-      "LAND_CROP": {
-        "has_data": false,
-        "weight": 3
-      },
-      "TRANSACTION": {
-        "has_data": true,
-        "weight": 2
-      },
-      "CERTIFICATION": {
-        "has_data": true,
-        "weight": 2
-      },
-      "GREEN_ACTION": {
-        "has_data": false,
-        "weight": 2
-      },
-      "INPUT_EQUIPMENT": {
-        "has_data": false,
-        "weight": 1
-      },
-      "LOAN_PURPOSE": {
-        "has_data": false,
-        "weight": 1
-      }
-    },
+    "score": 88.0,
+    "level": "L4",
+    "details": {},
     "rule_version": "GREENFIN_DEMO_V1",
-    "calculated_at": "2026-08-17T05:02:52.108473+00:00",
+    "calculated_at": "2026-08-17T10:00:00+08:00",
     "input_evidence_ids": [
       "rec-a1-certification",
       "rec-a2-transaction"
     ],
-    "calculation_trace": "Domains covered: 2/7, weighted score: 4/14 = 28.6%"
+    "calculation_trace": "DEMO simulated completeness for Case A (Healthy)"
   },
   {
-    "id": "8584f601-a209-4f6d-8c37-ca5f9dc21532",
-    "created_at": "2026-08-17T05:02:52.109231+00:00",
+    "id": "ind-a-credibility",
+    "created_at": "2026-08-17T07:33:57.980601+00:00",
     "updated_at": null,
     "farmer_id": "farmer-a-chen",
     "indicator_type": "credibility",
-    "score": 93.5,
+    "score": 82.0,
     "level": "L5",
-    "details": {
-      "source_avg": 83.5,
-      "anomaly_penalty": 0,
-      "traceability_bonus": 10.0,
-      "record_count": 2,
-      "unresolved_anomalies": 0
-    },
+    "details": {},
     "rule_version": "GREENFIN_DEMO_V1",
-    "calculated_at": "2026-08-17T05:02:52.109217+00:00",
+    "calculated_at": "2026-08-17T10:00:00+08:00",
     "input_evidence_ids": [
       "rec-a1-certification",
       "rec-a2-transaction"
     ],
-    "calculation_trace": "source_avg=83.5 - anomaly_penalty=0 + traceability_bonus=10.0 = 93.5"
+    "calculation_trace": "DEMO simulated credibility for Case A (Healthy)"
   },
   {
-    "id": "04361174-9cae-4f31-92a3-d35dbcc10966",
-    "created_at": "2026-08-17T05:02:52.109836+00:00",
+    "id": "ind-a-business_maturity",
+    "created_at": "2026-08-17T07:33:57.993924+00:00",
     "updated_at": null,
     "farmer_id": "farmer-a-chen",
     "indicator_type": "business_maturity",
-    "score": 36.4,
-    "level": "L2",
-    "details": {
-      "domains_covered": 2,
-      "record_count": 2,
-      "document_count": 2,
-      "has_transactions": true,
-      "variety_score": 11.4,
-      "volume_score": 11.0,
-      "doc_score": 4.0
-    },
+    "score": 70.0,
+    "level": "L3",
+    "details": {},
     "rule_version": "GREENFIN_DEMO_V1",
-    "calculated_at": "2026-08-17T05:02:52.109823+00:00",
+    "calculated_at": "2026-08-17T10:00:00+08:00",
     "input_evidence_ids": [
       "rec-a1-certification",
       "rec-a2-transaction"
     ],
-    "calculation_trace": "variety=11.4 + volume=11.0 + docs=4.0 + txn_bonus=10 = 36.4"
+    "calculation_trace": "DEMO simulated business_maturity for Case A (Healthy)"
   },
   {
-    "id": "39c9938e-598d-4424-a143-bec675bb51ab",
-    "created_at": "2026-08-17T05:02:52.110624+00:00",
+    "id": "ind-a-green_maturity",
+    "created_at": "2026-08-17T07:33:58.004845+00:00",
     "updated_at": null,
     "farmer_id": "farmer-a-chen",
     "indicator_type": "green_maturity",
-    "score": 16.0,
-    "level": "L1",
-    "details": {
-      "total_experience": 150.0,
-      "active_dimensions": 1,
-      "green_record_count": 0,
-      "v2_v3_ratio": 0,
-      "exp_score": 6.0,
-      "breadth_score": 10,
-      "quality_score": 0
-    },
+    "score": 75.0,
+    "level": "L4",
+    "details": {},
     "rule_version": "GREENFIN_DEMO_V1",
-    "calculated_at": "2026-08-17T05:02:52.110611+00:00",
+    "calculated_at": "2026-08-17T10:00:00+08:00",
     "input_evidence_ids": [
-      "exp-a1",
-      "exp-a2"
+      "rec-a1-certification",
+      "rec-a2-transaction"
     ],
-    "calculation_trace": "exp_contribution=6.0 + breadth=10 + quality=0.0 = 16.0"
+    "calculation_trace": "DEMO simulated green_maturity for Case A (Healthy)"
+  },
+  {
+    "id": "ind-b-completeness",
+    "created_at": "2026-08-17T07:33:58.015224+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-b-lin",
+    "indicator_type": "completeness",
+    "score": 52.0,
+    "level": "L2",
+    "details": {},
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00",
+    "input_evidence_ids": [
+      "rec-b1-activity"
+    ],
+    "calculation_trace": "DEMO simulated completeness for Case B (Needs Improvement)"
+  },
+  {
+    "id": "ind-b-credibility",
+    "created_at": "2026-08-17T07:33:58.028615+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-b-lin",
+    "indicator_type": "credibility",
+    "score": 35.0,
+    "level": "L2",
+    "details": {},
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00",
+    "input_evidence_ids": [
+      "rec-b1-activity"
+    ],
+    "calculation_trace": "DEMO simulated credibility for Case B (Needs Improvement)"
+  },
+  {
+    "id": "ind-b-business_maturity",
+    "created_at": "2026-08-17T07:33:58.039913+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-b-lin",
+    "indicator_type": "business_maturity",
+    "score": 40.0,
+    "level": "L2",
+    "details": {},
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00",
+    "input_evidence_ids": [
+      "rec-b1-activity"
+    ],
+    "calculation_trace": "DEMO simulated business_maturity for Case B (Needs Improvement)"
+  },
+  {
+    "id": "ind-b-green_maturity",
+    "created_at": "2026-08-17T07:33:58.056352+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-b-lin",
+    "indicator_type": "green_maturity",
+    "score": 25.0,
+    "level": "L2",
+    "details": {},
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00",
+    "input_evidence_ids": [
+      "rec-b1-activity"
+    ],
+    "calculation_trace": "DEMO simulated green_maturity for Case B (Needs Improvement)"
+  },
+  {
+    "id": "ind-c-completeness",
+    "created_at": "2026-08-17T07:33:58.068593+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-c-wang",
+    "indicator_type": "completeness",
+    "score": 15.0,
+    "level": "L1",
+    "details": {},
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00",
+    "input_evidence_ids": [
+      "rec-c1-expired-cert",
+      "rec-c2-duplicate"
+    ],
+    "calculation_trace": "DEMO simulated completeness for Case C (Abnormal)"
+  },
+  {
+    "id": "ind-c-credibility",
+    "created_at": "2026-08-17T07:33:58.082017+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-c-wang",
+    "indicator_type": "credibility",
+    "score": 5.0,
+    "level": "L1",
+    "details": {},
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00",
+    "input_evidence_ids": [
+      "rec-c1-expired-cert",
+      "rec-c2-duplicate"
+    ],
+    "calculation_trace": "DEMO simulated credibility for Case C (Abnormal)"
+  },
+  {
+    "id": "ind-c-business_maturity",
+    "created_at": "2026-08-17T07:33:58.098685+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-c-wang",
+    "indicator_type": "business_maturity",
+    "score": 10.0,
+    "level": "L1",
+    "details": {},
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00",
+    "input_evidence_ids": [
+      "rec-c1-expired-cert",
+      "rec-c2-duplicate"
+    ],
+    "calculation_trace": "DEMO simulated business_maturity for Case C (Abnormal)"
+  },
+  {
+    "id": "ind-c-green_maturity",
+    "created_at": "2026-08-17T07:33:58.110970+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-c-wang",
+    "indicator_type": "green_maturity",
+    "score": 0.0,
+    "level": "L1",
+    "details": {},
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00",
+    "input_evidence_ids": [
+      "rec-c1-expired-cert",
+      "rec-c2-duplicate"
+    ],
+    "calculation_trace": "DEMO simulated green_maturity for Case C (Abnormal)"
   }
 ]

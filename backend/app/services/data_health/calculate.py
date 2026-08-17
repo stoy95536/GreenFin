@@ -20,8 +20,7 @@ Each result must include: status, reasons[], actions[], affected_evidence_ids, r
 RED does NOT mean loan rejected. GRAY does NOT mean poor performance.
 """
 
-from datetime import date, datetime, timedelta
-
+from backend.app.core.dates import expires_within
 from backend.app.models import (
     AnomalySeverity,
     DataDomain,
@@ -38,7 +37,11 @@ from backend.app.repositories import (
     get_verification_repo,
 )
 from backend.app.rules import get_active_engine
+from backend.app.services import audit
 
+
+# Date-bearing field names checked for upcoming expiry.
+EXPIRY_FIELD_NAMES = ("有效期限", "expiry", "到期日")
 
 # Domains to assess
 ALL_DOMAINS = [
@@ -212,6 +215,16 @@ def calculate_all_data_health(farmer_id: str) -> list[DataHealthResult]:
         dh_repo.create(result)
         results.append(result)
 
+    summary: dict[str, int] = {}
+    for result in results:
+        summary[result.status.value] = summary.get(result.status.value, 0) + 1
+
+    audit.data_health_updated(
+        farmer_id=farmer_id,
+        rule_version=results[0].rule_version if results else "unknown",
+        summary=summary,
+    )
+
     return results
 
 
@@ -225,28 +238,17 @@ def get_farmer_data_health(farmer_id: str) -> list[DataHealthResult]:
 
 
 def _check_expiring_soon(records, warning_days: int) -> bool:
-    """Check if any record has a date field expiring within warning_days."""
-    threshold = date.today() + timedelta(days=warning_days)
-    date_fields = ["有效期限", "expiry", "到期日"]
+    """
+    Check if any record has a date field expiring within warning_days.
 
+    Uses the shared date parser so a value understood by anomaly detection is also
+    understood here (these previously diverged).
+    """
     for record in records:
-        for field_name in date_fields:
-            value = record.data.get(field_name)
-            if value:
-                d = _parse_date(value)
-                if d and date.today() <= d <= threshold:
-                    return True
+        for field_name in EXPIRY_FIELD_NAMES:
+            if expires_within(record.data.get(field_name), warning_days):
+                return True
     return False
-
-
-def _parse_date(value: str) -> date | None:
-    """Parse date string."""
-    for fmt in ("%Y-%m-%d", "%Y/%m/%d"):
-        try:
-            return datetime.strptime(value, fmt).date()
-        except ValueError:
-            continue
-    return None
 
 
 def _domain_label(domain: DataDomain) -> str:

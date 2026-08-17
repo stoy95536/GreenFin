@@ -1,0 +1,34 @@
+GREENFIN DEVELOPMENT TEST RECORD
+
+Gate:
+GATE-12 — Traceability
+
+Timestamp:
+2026-08-17T16:30:00+08:00
+
+Test Scope:
+End-to-end traceability chains for experience, indicators, and data health.
+
+Commands:
+- python -m pytest backend/tests/ tests/ -q --tb=short
+
+Tests Executed:
+
+GATE-12 New Tests (16):
+- test_gate12_traceability.py (16 tests): PASSED
+  - TestExperienceTraceability (5): valid chain, rule version, document, fields, nonexistent
+  - TestIndicatorTraceability (3): valid chain, calculation trace, nonexistent
+  - TestDataHealthTraceability (3): valid chain, status/reasons, nonexistent
+  - TestValidateAllTraceability (5): all valid, experience, indicator, data health, empty farmer
+
+Regression Tests (319):
+- GATE-01 through GATE-11: PASSED
+
+Passed:
+335
+
+Failed:
+0
+
+FINAL GATE STATUS:
+PASS

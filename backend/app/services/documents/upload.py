@@ -15,6 +15,7 @@ from typing import Optional
 
 from backend.app.models import Document, DataDomain, DocumentStatus, SourceLevel
 from backend.app.repositories import get_document_repo
+from backend.app.services import audit
 from backend.app.services.documents.storage import (
     UPLOADS_DIR,
     compute_file_hash,
@@ -103,5 +104,12 @@ def upload_document(
         upload_note=upload_note,
     )
     doc_repo.create(document)
+
+    audit.document_uploaded(
+        document_id=document.id,
+        farmer_id=farmer_id,
+        filename=filename,
+        domain=domain.value,
+    )
 
     return document

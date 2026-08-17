@@ -3,9 +3,17 @@ GreenFin Repositories.
 
 JSON file-based repositories for all domain entities (ADR-0006).
 Each repository provides CRUD operations on its respective JSON data file.
+
+The active data directory is resolved lazily via core.storage.get_data_dir().
+Import get_data_dir() rather than a DATA_DIR constant, so overrides always apply.
 """
 
-from backend.app.repositories.json_repository import JsonRepository, DATA_DIR
+from backend.app.core.storage import (
+    PRODUCTION_DATA_DIR,
+    get_data_dir,
+    set_data_dir,
+)
+from backend.app.repositories.json_repository import JsonRepository
 from backend.app.models import (
     AuditLog,
     Authorization,
@@ -102,7 +110,9 @@ def get_audit_log_repo() -> JsonRepository[AuditLog]:
 
 __all__ = [
     "JsonRepository",
-    "DATA_DIR",
+    "get_data_dir",
+    "set_data_dir",
+    "PRODUCTION_DATA_DIR",
     "get_user_repo",
     "get_farmer_repo",
     "get_bank_repo",

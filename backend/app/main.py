@@ -17,15 +17,21 @@ from backend.app.api.experience import router as experience_router
 from backend.app.api.indicators import router as indicators_router
 from backend.app.api.data_health import router as data_health_router
 from backend.app.api.authorization import router as authorization_router
+from backend.app.api.bank import router as bank_router
+from backend.app.api.traceability import router as traceability_router
+from backend.app.api.reports import router as reports_router
+from backend.app.api.audit import router as audit_router
+from backend.app.api.auth import router as auth_router
+from backend.app.api.green_actions import router as green_actions_router
 from backend.app.core.config import settings
-from backend.app.repositories import DATA_DIR
+from backend.app.core.storage import get_data_dir
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application startup/shutdown lifecycle."""
-    # Startup: ensure data directory exists
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    # Startup: ensure the active data directory exists
+    get_data_dir().mkdir(parents=True, exist_ok=True)
     yield
     # Shutdown: nothing to clean up for JSON storage
 
@@ -59,3 +65,9 @@ app.include_router(experience_router, prefix="/api")
 app.include_router(indicators_router, prefix="/api")
 app.include_router(data_health_router, prefix="/api")
 app.include_router(authorization_router, prefix="/api")
+app.include_router(bank_router, prefix="/api")
+app.include_router(traceability_router, prefix="/api")
+app.include_router(reports_router, prefix="/api")
+app.include_router(audit_router, prefix="/api")
+app.include_router(auth_router, prefix="/api")
+app.include_router(green_actions_router, prefix="/api")

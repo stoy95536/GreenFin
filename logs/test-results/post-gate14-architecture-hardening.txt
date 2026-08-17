@@ -1,0 +1,104 @@
+GREENFIN DEVELOPMENT TEST RECORD
+
+Gate:
+POST-GATE-14 — Architecture Hardening (review remediation)
+
+Timestamp:
+2026-08-17T18:30:00+08:00
+
+Test Scope:
+Regression fixes for test isolation, atomic writes, rule-driven indicators, single-source
+rule config, unified date parsing, dead-code removal, audit trail implementation,
+frontend typing/consistency, and CI. Authentication excluded by user decision.
+
+Commands:
+- python -m pytest backend/tests/ tests/ -q
+- npm run build (frontend, tsc strict + vite)
+- Live functional verification against 127.0.0.1:8011
+
+Tests Executed:
+
+New regression tests (34):
+- test_regression_data_isolation.py (7): PASSED
+  - active data dir != production, equals fixture dir, repo path outside production,
+    no Path bound as default argument, writes land in fixture, production file untouched
+- test_regression_rule_driven.py (6): PASSED
+  - domain tier change alters completeness score (75.0 vs 25.0)
+  - level thresholds alter level (L5 vs L1 at identical score)
+  - source_level_scores alter credibility (77.0 vs 20.0)
+  - traceability bonus cap respected (42.0)
+  - stamped rule_version matches the version that produced the score
+- test_regression_audit_trail.py (17): PASSED
+  - upload/OCR/field correction/verification audited
+  - experience/indicator/data-health recalculations audited
+  - authorization grant/revoke audited, bank access audited, report generation audited
+  - denied access NOT recorded as a data access
+  - audit content carries actor/target/resource; trail is chronological
+  - audit API list/filter/invalid-type/event-types
+- test_gate07_api.py explainability (2): PASSED
+- test_gate01_database.py lazy creation (2), test_gate01_config.py (2): PASSED
+
+Removed:
+- test_gate01_migration.py (5 tests) — validated deleted dead Alembic scaffolding
+
+Regression suite:
+- All GATE-01 … GATE-14 tests: PASSED
+
+Passed:
+386
+
+Failed:
+0
+
+Defects found DURING this verification and fixed:
+1. GET /api/farmers/{id}/indicators omitted calculation_trace — the UI could display a
+   score with no explanation. Fixed + 2 guard tests.
+2. Indicator empty-result path did not cite rule_version in its trace, unlike every
+   other trace. Fixed rather than weakening the test that caught it.
+3. Tailwind content globs were CWD-relative; building from the repo root produced a
+   bundle with no styles. Fixed by anchoring globs to the config directory.
+   Evidence: CSS 4,949 bytes (no theme colors) → 17,862 bytes (theme colors present).
+4. Seed script crashed when stdout was piped on Windows (cp950). Fixed with UTF-8
+   stdout reconfiguration.
+
+Functional Verification (live server, 27/27 passed):
+  [PASS] health 200
+  [PASS] data files present (18)
+  [PASS] farmers seeded (3)
+  [PASS] only demo rule version present
+  [PASS] indicator rules expose weights
+  [PASS] indicator rules expose thresholds
+  [PASS] recalculate-all 200
+  [PASS] recalc returns 4 indicators
+  [PASS] recalc reports rule version
+  [PASS] 4 indicators stored
+  [PASS] traces cite rule version
+  [PASS] 7 domains assessed
+  [PASS] traceability all valid
+  [PASS] audit has entries
+  [PASS] experience recalc audited
+  [PASS] indicator recalc audited
+  [PASS] data health audited
+  [PASS] authorized bank 200
+  [PASS] bank access audited
+  [PASS] unauthorized bank 403
+  [PASS] bank package 200
+  [PASS] package traceability valid
+  [PASS] package has disclaimer
+  [PASS] upload 200
+  [PASS] ocr extracted fields
+  [PASS] verify 200
+  [PASS] duplicate rejected 400
+
+Isolation proof (the original P0 defect):
+  Before fix: rule_sets.json ['GREENFIN_DEMO_V1'] -> ['V1','V2'] after a test run
+  After fix:  rule_sets.json ['GREENFIN_DEMO_V1'] unchanged after all 386 tests
+              users.json still 4 records
+
+Known Issues:
+- No authentication (deliberately out of scope for Demo; see AI Change Log and ADR notes)
+- Storage write lock is per-process only (ADR-0009)
+- Full-file JSON parsing per read (acceptable at Demo volume)
+
+FINAL STATUS:
+PASS

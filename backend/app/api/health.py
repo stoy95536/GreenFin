@@ -9,7 +9,8 @@ from datetime import datetime, timezone
 from fastapi import APIRouter
 
 from backend.app.core.config import settings
-from backend.app.repositories import DATA_DIR, get_user_repo, get_farmer_repo
+from backend.app.core.storage import get_data_dir
+from backend.app.repositories import get_farmer_repo
 
 router = APIRouter(tags=["health"])
 
@@ -19,16 +20,16 @@ def health_check():
     """
     Returns application health status including data directory accessibility.
     """
-    # Check JSON data directory
     data_status = "connected"
     data_files = 0
     farmers_count = 0
 
     try:
-        if not DATA_DIR.exists():
+        data_dir = get_data_dir()
+        if not data_dir.exists():
             data_status = "error: data directory not found"
         else:
-            data_files = len(list(DATA_DIR.glob("*.json")))
+            data_files = len(list(data_dir.glob("*.json")))
             farmers_count = get_farmer_repo().count()
     except Exception as e:
         data_status = f"error: {str(e)}"

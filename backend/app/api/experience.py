@@ -84,3 +84,34 @@ def api_recalculate_experience(farmer_id: str):
         "message": "經驗值已重新計算",
         "summary": summary,
     }
+
+
+@router.post("/farmers/{farmer_id}/recalculate-all")
+def api_recalculate_all(farmer_id: str):
+    """
+    Recalculate experience, indicators and Data Health in one transaction-like step.
+
+    This orchestration belongs on the server: the frontend previously fired three
+    sequential POSTs, so a failure on the second left the farmer with a partially
+    recalculated, inconsistent state. Order matters — indicators and green maturity
+    read experience results, so experience must be recomputed first.
+    """
+    from backend.app.services.indicators.calculate import calculate_all_indicators
+    from backend.app.services.data_health.calculate import calculate_all_data_health
+
+    experience = recalculate_farmer_experience(farmer_id)
+    indicators = calculate_all_indicators(farmer_id)
+    data_health = calculate_all_data_health(farmer_id)
+
+    health_summary: dict[str, int] = {}
+    for result in data_health:
+        health_summary[result.status.value] = health_summary.get(result.status.value, 0) + 1
+
+    return {
+        "message": "已重新計算經驗值、四大指標與 Data Health",
+        "farmer_id": farmer_id,
+        "experience": experience,
+        "indicators": {i.indicator_type: {"score": i.score, "level": i.level} for i in indicators},
+        "data_health_summary": health_summary,
+        "rule_version": experience.get("rule_version"),
+    }

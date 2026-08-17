@@ -82,3 +82,31 @@ class TestCalculateIndicators:
         response = client.get("/api/farmers/farmer-note/indicators")
         data = response.json()
         assert "不得" in data["note"] or "獨立" in data["note"]
+
+
+class TestExplainability:
+    """
+    GET indicators must expose the calculation trace.
+
+    Found during post-fix verification: the endpoint returned scores without the
+    trace, so the farmer UI could show a number but never the explanation behind it,
+    which contradicts "Explainable by Design" (AGENTS.md §6).
+    """
+
+    def test_get_includes_calculation_trace(self, client, test_data_dir):
+        _seed()
+        client.post("/api/farmers/farmer-explain/indicators/calculate")
+        response = client.get("/api/farmers/farmer-explain/indicators")
+        indicators = response.json()["indicators"]
+        assert indicators
+        for indicator_type, payload in indicators.items():
+            assert "calculation_trace" in payload, f"{indicator_type} missing trace"
+            assert payload["calculation_trace"], f"{indicator_type} trace is empty"
+
+    def test_trace_cites_the_rule_version(self, client, test_data_dir):
+        _seed()
+        client.post("/api/farmers/farmer-explain2/indicators/calculate")
+        response = client.get("/api/farmers/farmer-explain2/indicators")
+        for payload in response.json()["indicators"].values():
+            assert payload["rule_version"] == "IND_API_V1"
+            assert "IND_API_V1" in payload["calculation_trace"]

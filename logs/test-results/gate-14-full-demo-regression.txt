@@ -1,0 +1,52 @@
+GREENFIN DEVELOPMENT TEST RECORD
+
+Gate:
+GATE-14 — Full Demo Regression
+
+Timestamp:
+2026-08-17T17:30:00+08:00
+
+Test Scope:
+Complete end-to-end demo flow per AGENTS.md §19 Primary Demo Story.
+
+Commands:
+- python -m pytest backend/tests/ tests/ -q --tb=short
+
+Tests Executed:
+
+GATE-14 New Tests (9):
+- test_gate14_full_regression.py (9 tests): PASSED
+  - TestFullDemoRegression (1): Complete 15-step flow
+  - TestDemoThreeCases (3): Case A healthy, Case B yellow, Case C duplicate rejected
+  - TestRegressionChecks (5): health, rules, experience rules, duplicate reject, documents
+
+Regression Tests (350):
+- GATE-01 through GATE-13: PASSED
+
+Passed:
+359
+
+Failed:
+0
+
+Functional Verification:
+Full demo flow verified end-to-end:
+  Farmer → Upload → OCR → Confirm → Normalize → Verify → Anomaly →
+  Data Health → Experience → Indicators → Trace → Authorize →
+  Bank Cases → Analysis → Evidence → Package → Done
+
+Security verified:
+  unauthorized → 403
+  revoked → 403
+
+Three demo cases verified:
+  Case A (V3) → GREEN
+  Case B (V1) → YELLOW
+  Case C (duplicate) → rejected
+
+FINAL GATE STATUS:
+PASS
+
+═══════════════════════════════════════
+  ALL 14 GATES PASS — DEMO READY
+═══════════════════════════════════════

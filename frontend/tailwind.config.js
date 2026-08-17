@@ -1,6 +1,18 @@
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+// Anchor content globs to this config's directory rather than the process CWD.
+// Otherwise building from the repository root resolves them against the wrong
+// directory, Tailwind finds no source files, and the bundle ships with no styles —
+// a silent failure that only shows up visually.
+const here = dirname(fileURLToPath(import.meta.url));
+
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    join(here, "index.html"),
+    join(here, "src/**/*.{js,ts,jsx,tsx}"),
+  ],
   theme: {
     extend: {
       colors: {

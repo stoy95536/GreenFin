@@ -24,6 +24,7 @@ from datetime import datetime, timezone
 from backend.app.models import Authorization, AuthorizationStatus
 from backend.app.models.base import now_taipei
 from backend.app.repositories import get_authorization_repo
+from backend.app.services import audit
 
 
 class AuthorizationError(Exception):
@@ -76,6 +77,15 @@ def grant_authorization(
         status=AuthorizationStatus.ACTIVE,
     )
     auth_repo.create(auth)
+
+    audit.authorization_granted(
+        authorization_id=auth.id,
+        farmer_id=farmer_id,
+        institution_id=institution_id,
+        purpose=purpose,
+        data_scope=data_scope,
+    )
+
     return auth
 
 
@@ -97,6 +107,13 @@ def revoke_authorization(authorization_id: str) -> Authorization:
     auth.status = AuthorizationStatus.REVOKED
     auth.revoked_at = now_taipei()
     auth_repo.update(auth)
+
+    audit.authorization_revoked(
+        authorization_id=auth.id,
+        farmer_id=auth.farmer_id,
+        institution_id=auth.institution_id,
+    )
+
     return auth
 
 

@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { useAuth } from "./AuthContext";
 
 export interface FarmerOption {
   id: string;
@@ -23,9 +24,30 @@ const FarmerContext = createContext<FarmerContextType | null>(null);
 
 export function FarmerProvider({ children }: { children: ReactNode }) {
   const [currentFarmer, setCurrentFarmer] = useState<FarmerOption>(DEMO_FARMERS[0]);
+  const { user } = useAuth();
+
+  // When a farmer logs in, set the current farmer to their own profile
+  useEffect(() => {
+    if (user?.role === "farmer" && user.farmer_id) {
+      const existing = DEMO_FARMERS.find((f) => f.id === user.farmer_id);
+      if (existing) {
+        setCurrentFarmer(existing);
+      } else {
+        // Newly registered farmer not in the static list
+        setCurrentFarmer({
+          id: user.farmer_id,
+          name: user.display_name,
+          farm: "",
+          case_type: "新註冊",
+        });
+      }
+    }
+  }, [user]);
 
   return (
-    <FarmerContext.Provider value={{ currentFarmer, setFarmer: setCurrentFarmer, farmers: DEMO_FARMERS }}>
+    <FarmerContext.Provider
+      value={{ currentFarmer, setFarmer: setCurrentFarmer, farmers: DEMO_FARMERS }}
+    >
       {children}
     </FarmerContext.Provider>
   );

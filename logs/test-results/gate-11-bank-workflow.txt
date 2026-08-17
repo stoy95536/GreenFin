@@ -1,0 +1,42 @@
+GREENFIN DEVELOPMENT TEST RECORD
+
+Gate:
+GATE-11 — Bank Workflow
+
+Timestamp:
+2026-08-17T16:00:00+08:00
+
+Test Scope:
+Bank case list, case detail (guarded), evidence chain, record trace, frontend build.
+
+Commands:
+- python -m pytest backend/tests/ tests/ -q --tb=short
+
+Tests Executed:
+
+GATE-11 New Tests (9):
+- test_gate11_bank.py (9 tests): PASSED
+  - TestBankCaseList (2): authorized cases, unknown bank empty
+  - TestBankCaseDetail (2): authorized full detail, unauthorized 403
+  - TestBankEvidence (2): authorized evidence, unauthorized 403
+  - TestBankTrace (3): trace record, nonexistent 404, unauthorized 403
+
+Regression Tests (310):
+- GATE-01 through GATE-10: PASSED
+
+Passed:
+319
+
+Failed:
+0
+
+Functional Verification:
+- Bank case list returns authorized farmers only
+- Case detail includes profile, experience, indicators, data health, anomalies, disclaimer
+- Evidence endpoint returns document → fields → records → verifications chain
+- Trace endpoint returns full lineage for single record
+- All unauthorized access returns 403
+- Frontend TypeScript compiles with no errors
+
+FINAL GATE STATUS:
+PASS

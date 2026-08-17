@@ -17,11 +17,8 @@ class Settings(BaseSettings):
     APP_TIMEZONE: str = "Asia/Taipei"
 
     # Backend
-    BACKEND_HOST: str = "0.0.0.0"
+    BACKEND_HOST: str = "127.0.0.1"
     BACKEND_PORT: int = 8000
-
-    # Database
-    DATABASE_URL: str = "sqlite:///./greenfin_demo.db"
 
     # Demo
     DEMO_MODE: bool = True

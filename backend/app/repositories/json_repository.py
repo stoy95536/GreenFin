@@ -6,20 +6,27 @@ One JSON file per entity type, each containing a list of records.
 
 Per ADR-0006: Demo uses JSON files instead of SQL database.
 Repository interface is designed so a SQL implementation can replace it later.
+
+Design notes:
+- The data directory is resolved lazily via core.storage.get_data_dir(). It is
+  deliberately NOT a default argument: binding a Path as a default freezes it at
+  import time and makes runtime/test overrides silently ineffective.
+- Mutations go through storage.mutate_json_atomic(), which holds the write lock for
+  the whole read-modify-write cycle and replaces the file atomically.
 """
 
-import json
 from pathlib import Path
 from typing import Generic, Optional, TypeVar
 
-from pydantic import BaseModel
-
-from backend.app.models.base import EntityBase, now_taipei
+from backend.app.core.storage import (
+    get_data_dir,
+    mutate_json_atomic,
+    read_json,
+    write_json_atomic,
+)
+from backend.app.models.base import EntityBase
 
 T = TypeVar("T", bound=EntityBase)
-
-# Default data directory
-DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 
 
 class JsonRepository(Generic[T]):
@@ -30,51 +37,44 @@ class JsonRepository(Generic[T]):
     The file contains a JSON array of serialized entity objects.
     """
 
-    def __init__(self, model_class: type[T], filename: str, data_dir: Path = DATA_DIR):
+    def __init__(self, model_class: type[T], filename: str, data_dir: Optional[Path] = None):
         """
         Initialize repository.
 
         Args:
             model_class: The Pydantic model class for deserialization.
             filename: JSON filename (e.g. "users.json").
-            data_dir: Directory where JSON files are stored.
+            data_dir: Optional explicit directory. When None (the normal case) the
+                      active directory is resolved lazily on every access, so test
+                      and deployment overrides always apply.
         """
         self.model_class = model_class
-        self.data_dir = data_dir
-        self.file_path = data_dir / filename
+        self.filename = filename
+        self._explicit_data_dir = Path(data_dir) if data_dir is not None else None
 
-        # Ensure data directory exists
-        self.data_dir.mkdir(parents=True, exist_ok=True)
+    @property
+    def data_dir(self) -> Path:
+        """Active data directory, resolved at access time."""
+        return self._explicit_data_dir if self._explicit_data_dir is not None else get_data_dir()
 
-        # Create empty file if it doesn't exist
-        if not self.file_path.exists():
-            self._write_all([])
+    @property
+    def file_path(self) -> Path:
+        """Full path to this repository's JSON file, resolved at access time."""
+        return self.data_dir / self.filename
+
+    # ─── Reads ────────────────────────────────────────────────────────────────
 
     def _read_all_raw(self) -> list[dict]:
-        """Read all raw records from JSON file."""
-        if not self.file_path.exists():
-            return []
-        content = self.file_path.read_text(encoding="utf-8")
-        if not content.strip():
-            return []
-        return json.loads(content)
-
-    def _write_all(self, records: list[dict]) -> None:
-        """Write all records to JSON file."""
-        self.file_path.write_text(
-            json.dumps(records, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
+        """Read all raw records from the JSON file."""
+        return read_json(self.file_path)
 
     def get_all(self) -> list[T]:
         """Get all entities."""
-        raw = self._read_all_raw()
-        return [self.model_class.model_validate(r) for r in raw]
+        return [self.model_class.model_validate(r) for r in self._read_all_raw()]
 
     def get_by_id(self, entity_id: str) -> Optional[T]:
         """Get a single entity by ID. Returns None if not found."""
-        raw = self._read_all_raw()
-        for record in raw:
+        for record in self._read_all_raw():
             if record.get("id") == entity_id:
                 return self.model_class.model_validate(record)
         return None
@@ -85,11 +85,9 @@ class JsonRepository(Generic[T]):
 
         Example: repo.find_by(farmer_id="abc", domain="IDENTITY")
         """
-        raw = self._read_all_raw()
         results = []
-        for record in raw:
-            match = all(record.get(k) == v for k, v in kwargs.items())
-            if match:
+        for record in self._read_all_raw():
+            if all(record.get(k) == v for k, v in kwargs.items()):
                 results.append(self.model_class.model_validate(record))
         return results
 
@@ -98,22 +96,29 @@ class JsonRepository(Generic[T]):
         results = self.find_by(**kwargs)
         return results[0] if results else None
 
+    def count(self) -> int:
+        """Return total number of entities."""
+        return len(self._read_all_raw())
+
+    def exists(self, entity_id: str) -> bool:
+        """Check if an entity with given ID exists."""
+        return any(r.get("id") == entity_id for r in self._read_all_raw())
+
+    # ─── Mutations (atomic, lock held across read-modify-write) ───────────────
+
     def create(self, entity: T) -> T:
         """
         Add a new entity. Returns the created entity.
 
         Raises ValueError if an entity with the same ID already exists.
         """
-        raw = self._read_all_raw()
+        def mutator(records: list[dict]):
+            for record in records:
+                if record.get("id") == entity.id:
+                    raise ValueError(f"Entity with id '{entity.id}' already exists")
+            return records + [entity.model_dump(mode="json")], entity
 
-        # Check for duplicate ID
-        for record in raw:
-            if record.get("id") == entity.id:
-                raise ValueError(f"Entity with id '{entity.id}' already exists")
-
-        raw.append(entity.model_dump())
-        self._write_all(raw)
-        return entity
+        return mutate_json_atomic(self.file_path, mutator)
 
     def update(self, entity: T) -> T:
         """
@@ -121,45 +126,27 @@ class JsonRepository(Generic[T]):
 
         Raises ValueError if entity not found.
         """
-        raw = self._read_all_raw()
-        found = False
-
-        for i, record in enumerate(raw):
-            if record.get("id") == entity.id:
-                entity.touch()
-                raw[i] = entity.model_dump()
-                found = True
-                break
-
-        if not found:
+        def mutator(records: list[dict]):
+            for i, record in enumerate(records):
+                if record.get("id") == entity.id:
+                    entity.touch()
+                    updated = list(records)
+                    updated[i] = entity.model_dump(mode="json")
+                    return updated, entity
             raise ValueError(f"Entity with id '{entity.id}' not found")
 
-        self._write_all(raw)
-        return entity
+        return mutate_json_atomic(self.file_path, mutator)
 
     def delete(self, entity_id: str) -> bool:
         """
         Delete an entity by ID. Returns True if deleted, False if not found.
         """
-        raw = self._read_all_raw()
-        original_len = len(raw)
-        raw = [r for r in raw if r.get("id") != entity_id]
+        def mutator(records: list[dict]):
+            remaining = [r for r in records if r.get("id") != entity_id]
+            return remaining, len(remaining) != len(records)
 
-        if len(raw) == original_len:
-            return False
-
-        self._write_all(raw)
-        return True
-
-    def count(self) -> int:
-        """Return total number of entities."""
-        return len(self._read_all_raw())
-
-    def exists(self, entity_id: str) -> bool:
-        """Check if an entity with given ID exists."""
-        raw = self._read_all_raw()
-        return any(r.get("id") == entity_id for r in raw)
+        return mutate_json_atomic(self.file_path, mutator)
 
     def clear(self) -> None:
-        """Remove all entities. Use with caution (mainly for testing)."""
-        self._write_all([])
+        """Remove all entities. Use with caution (mainly for testing/seeding)."""
+        write_json_atomic(self.file_path, [])

@@ -2,10 +2,10 @@
 
 ## Repository Status
 
-目前狀態：
-
 ```text
-GATE-10 AUTHORIZATION = PASS
+══════════════════════════════════════════
+  ALL 14 GATES PASS — DEMO READY
+══════════════════════════════════════════
 ```
 
 ## Completed Gates
@@ -23,36 +23,53 @@ GATE-10 AUTHORIZATION = PASS
 | GATE-08 | Data Health | PASS | 2026-08-17 |
 | GATE-09 | Farmer Workflow | PASS | 2026-08-17 |
 | GATE-10 | Authorization | PASS | 2026-08-17 |
+| GATE-11 | Bank Workflow | PASS | 2026-08-17 |
+| GATE-12 | Traceability | PASS | 2026-08-17 |
+| GATE-13 | Report | PASS | 2026-08-17 |
+| GATE-14 | Full Demo Regression | PASS | 2026-08-17 |
 
-## GATE-10 Summary
+## Post-GATE-14 — Architecture Hardening (2026-08-17)
 
-Implementation:
-- Grant authorization (one active per farmer-institution pair)
-- Revoke authorization (sets REVOKED + revoked_at)
-- Check authorization (validates: ACTIVE, not expired, within start, scope match)
-- Auto-expire (checks expire_at against current time)
-- Bank access guard: require_bank_authorization raises 403 on denied access
-- Backend enforcement per AGENTS.md §17 (not just frontend hiding)
+An architectural review followed GATE-14. Findings were fixed and re-verified:
 
-Security Tests:
-- authorized bank → allowed ✓
-- unauthorized bank → denied (403) ✓
-- expired authorization → denied (403) ✓
-- revoked authorization → denied (403) ✓
+| 問題 | 修復 |
+|------|------|
+| 測試會摧毀正式 Demo 資料（已重現） | 資料目錄改為延遲解析，測試隔離生效 |
+| 寫入非原子、有競態 | temp file + os.replace，讀改寫全程持鎖 |
+| 四大指標沒讀規則引擎（rule_version 失真） | 權重/門檻全部改由 config 驅動 |
+| 必要欄位規則有兩份 | 統一由規則引擎提供 |
+| 三份不一致的日期解析 | 統一到 core/dates.py |
+| SQLAlchemy/Alembic 死程式碼 + 5 個測試 | 全部移除（ADR-0007） |
+| AuditLog 只有模型沒有寫入 | 12 種事件全部實作 + API |
+| 前端無型別、銀行頁面繞過 client | 完整型別 + 統一 client |
+| Tailwind 從根目錄 build 會沒有樣式 | content globs 錨定設定檔目錄 |
+| 無 CI | 新增 GitHub Actions |
 
-API Endpoints:
-- POST /api/authorizations/grant
-- POST /api/authorizations/{id}/revoke
-- GET /api/farmers/{id}/authorizations
-- GET /api/banks/{id}/authorizations
-- POST /api/authorizations/check
-- GET /api/bank/{id}/farmer/{id}/data (guarded)
+決策紀錄：ADR-0007 ~ ADR-0010（見 `docs/DECISIONS.md`）
 
-Tests:
-- 310 total (25 new + 285 regression), all pass
+## Final Statistics
 
-## Next Development Gate
+- Total tests: **386** (34 new regression tests, 5 dead tests removed)
+- All passing: **Yes**
+- Frontend build: **Successful** (strict TypeScript, styles verified present)
+- Full demo flow: **Verified end-to-end**
+- Live functional verification: **27/27 checks passed**
+
+## Known Limitation
 
 ```text
-GATE-11 — Bank Workflow
+NO AUTHENTICATION
+```
+
+`institution_id` 與 `farmer_id` 都是呼叫端提供的路徑參數，因此任何 client 都可以聲稱
+自己是任一銀行或小農。授權 guard 驗證的是「授權紀錄是否存在」，不是「呼叫者身分」。
+
+此項經使用者決定暫不實作（Demo 範圍）。對外說明時不得將其描述為已完成的存取控制。
+
+## Demo Proven Capabilities
+
+Per AGENTS.md §5, the demo proves data can be:
+
+```
+蒐集 ✓ → 擷取 ✓ → 標準化 ✓ → 核驗 ✓ → 異常檢查 ✓ → 計算 ✓ → 解釋 ✓ → 追溯 ✓ → 授權分享 ✓
 ```

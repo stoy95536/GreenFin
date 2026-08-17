@@ -1,55 +1,94 @@
 /**
  * GreenFin API client.
- * All backend calls go through /api/ prefix (proxied by Vite in dev).
+ *
+ * Every backend call goes through here (proxied to the backend by Vite in dev), and
+ * every function has a concrete return type from types.ts. The bank pages previously
+ * bypassed this module with raw fetch() calls and their own hardcoded institution id,
+ * duplicating error handling; they now use these helpers too.
  */
+
+import type {
+  BankCaseDetailResponse,
+  BankCasesResponse,
+  BankEvidenceResponse,
+  ConfirmResponse,
+  DataHealthResponse,
+  DocumentFieldsResponse,
+  ExperienceHistoryResponse,
+  ExperienceSummary,
+  FarmerDocumentsResponse,
+  HealthResponse,
+  IndicatorsResponse,
+  RecalculateAllResponse,
+  ReviewQueueResponse,
+  UploadResponse,
+} from "./types";
 
 const BASE = "/api";
 
-async function request<T>(path: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
-    headers: { "Content-Type": "application/json", ...options?.headers },
-    ...options,
-  });
-  if (!res.ok) {
-    const error = await res.json().catch(() => ({ detail: res.statusText }));
-    throw new Error(error.detail || JSON.stringify(error));
+/** Demo institution. Single source of truth — was duplicated across 3 bank pages. */
+export const DEMO_INSTITUTION_ID = "bank-taishin";
+
+export class ApiError extends Error {
+  readonly status: number;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
   }
-  return res.json();
+
+  /** True when the backend refused for authorization reasons. */
+  get isForbidden(): boolean {
+    return this.status === 403;
+  }
 }
 
-// Health
-export const getHealth = () => request<any>("/health");
+/** Pull a human-readable message out of FastAPI's varied error shapes. */
+function extractMessage(payload: unknown, fallback: string): string {
+  if (typeof payload === "string") return payload;
+  if (payload && typeof payload === "object") {
+    const detail = (payload as { detail?: unknown }).detail;
+    if (typeof detail === "string") return detail;
+    if (detail && typeof detail === "object") {
+      const message = (detail as { message?: unknown }).message;
+      if (typeof message === "string") return message;
+      return JSON.stringify(detail);
+    }
+  }
+  return fallback;
+}
 
-// Farmers
+async function request<T>(path: string, options?: RequestInit): Promise<T> {
+  const res = await fetch(`${BASE}${path}`, {
+    headers:
+      options?.body instanceof FormData
+        ? options.headers
+        : { "Content-Type": "application/json", ...options?.headers },
+    ...options,
+  });
+
+  if (!res.ok) {
+    const payload = await res.json().catch(() => null);
+    throw new ApiError(res.status, extractMessage(payload, res.statusText));
+  }
+
+  return res.json() as Promise<T>;
+}
+
+// ─── Health ──────────────────────────────────────────────────────────────────
+
+export const getHealth = () => request<HealthResponse>("/health");
+
+// ─── Farmer: documents ───────────────────────────────────────────────────────
+
 export const getFarmerDocuments = (farmerId: string) =>
-  request<any>(`/farmers/${farmerId}/documents`);
+  request<FarmerDocumentsResponse>(`/farmers/${farmerId}/documents`);
 
-export const getExperienceSummary = (farmerId: string) =>
-  request<any>(`/farmers/${farmerId}/experience`);
+export const getDocumentFields = (docId: string) =>
+  request<DocumentFieldsResponse>(`/documents/${docId}/fields`);
 
-export const getExperienceHistory = (farmerId: string) =>
-  request<any>(`/farmers/${farmerId}/experience/history`);
-
-export const getIndicators = (farmerId: string) =>
-  request<any>(`/farmers/${farmerId}/indicators`);
-
-export const calculateIndicators = (farmerId: string) =>
-  request<any>(`/farmers/${farmerId}/indicators/calculate`, { method: "POST" });
-
-export const getDataHealth = (farmerId: string) =>
-  request<any>(`/farmers/${farmerId}/data-health`);
-
-export const calculateDataHealth = (farmerId: string) =>
-  request<any>(`/farmers/${farmerId}/data-health/calculate`, { method: "POST" });
-
-export const getReviewQueue = (farmerId: string) =>
-  request<any>(`/farmers/${farmerId}/review-queue`);
-
-export const recalculateExperience = (farmerId: string) =>
-  request<any>(`/farmers/${farmerId}/experience/recalculate`, { method: "POST" });
-
-// Documents
-export const uploadDocument = async (
+export const uploadDocument = (
   file: File,
   farmerId: string,
   domain: string,
@@ -61,25 +100,94 @@ export const uploadDocument = async (
   formData.append("domain", domain);
   formData.append("source_level", sourceLevel);
 
-  const res = await fetch(`${BASE}/documents/upload`, {
+  return request<UploadResponse>("/documents/upload", {
     method: "POST",
     body: formData,
   });
-  if (!res.ok) throw new Error((await res.json()).detail || "Upload failed");
-  return res.json();
 };
 
-export const confirmFields = (docId: string, corrections: Record<string, string> = {}) =>
-  request<any>(`/documents/${docId}/confirm`, {
+export const confirmFields = (
+  docId: string,
+  corrections: Record<string, string> = {}
+) =>
+  request<ConfirmResponse>(`/documents/${docId}/confirm`, {
     method: "POST",
     body: JSON.stringify({ corrections }),
   });
 
 export const normalizeDocument = (docId: string) =>
-  request<any>(`/documents/${docId}/normalize`, { method: "POST" });
+  request<{ document_id: string; message: string }>(
+    `/documents/${docId}/normalize`,
+    { method: "POST" }
+  );
 
 export const verifyDocument = (docId: string) =>
-  request<any>(`/documents/${docId}/verify`, { method: "POST" });
+  request<{ document_id: string; status: string; anomaly_count: number }>(
+    `/documents/${docId}/verify`,
+    { method: "POST" }
+  );
 
-export const getDocumentFields = (docId: string) =>
-  request<any>(`/documents/${docId}/fields`);
+/** Run the full post-upload pipeline: confirm → normalize → verify. */
+export const processDocument = async (docId: string) => {
+  await confirmFields(docId);
+  await normalizeDocument(docId);
+  return verifyDocument(docId);
+};
+
+// ─── Farmer: analysis ────────────────────────────────────────────────────────
+
+export const getExperienceSummary = (farmerId: string) =>
+  request<ExperienceSummary>(`/farmers/${farmerId}/experience`);
+
+export const getExperienceHistory = (farmerId: string) =>
+  request<ExperienceHistoryResponse>(`/farmers/${farmerId}/experience/history`);
+
+export const getIndicators = (farmerId: string) =>
+  request<IndicatorsResponse>(`/farmers/${farmerId}/indicators`);
+
+export const calculateIndicators = (farmerId: string) =>
+  request<{ farmer_id: string; message: string }>(
+    `/farmers/${farmerId}/indicators/calculate`,
+    { method: "POST" }
+  );
+
+export const getDataHealth = (farmerId: string) =>
+  request<DataHealthResponse>(`/farmers/${farmerId}/data-health`);
+
+export const calculateDataHealth = (farmerId: string) =>
+  request<{ farmer_id: string; message: string }>(
+    `/farmers/${farmerId}/data-health/calculate`,
+    { method: "POST" }
+  );
+
+export const getReviewQueue = (farmerId: string) =>
+  request<ReviewQueueResponse>(`/farmers/${farmerId}/review-queue`);
+
+/**
+ * Recalculate experience + indicators + data health in one backend call.
+ *
+ * Replaces three sequential client-side POSTs, where a mid-sequence failure left
+ * the farmer in a partially recalculated state.
+ */
+export const recalculateAll = (farmerId: string) =>
+  request<RecalculateAllResponse>(`/farmers/${farmerId}/recalculate-all`, {
+    method: "POST",
+  });
+
+// ─── Bank ────────────────────────────────────────────────────────────────────
+
+export const getBankCases = (institutionId: string = DEMO_INSTITUTION_ID) =>
+  request<BankCasesResponse>(`/bank/${institutionId}/cases`);
+
+export const getBankCaseDetail = (
+  farmerId: string,
+  institutionId: string = DEMO_INSTITUTION_ID
+) => request<BankCaseDetailResponse>(`/bank/${institutionId}/cases/${farmerId}`);
+
+export const getBankCaseEvidence = (
+  farmerId: string,
+  institutionId: string = DEMO_INSTITUTION_ID
+) =>
+  request<BankEvidenceResponse>(
+    `/bank/${institutionId}/cases/${farmerId}/evidence`
+  );

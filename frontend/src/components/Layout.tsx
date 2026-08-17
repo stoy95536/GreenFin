@@ -1,18 +1,28 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
-import { FileText, Home, Leaf, Activity, Shield } from "lucide-react";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { FileText, Home, Leaf, Activity, Shield, Building2, TreePine, LogOut } from "lucide-react";
 import { useFarmer } from "../context/FarmerContext";
+import { useAuth } from "../context/AuthContext";
 
 const NAV_ITEMS = [
   { path: "/", label: "Dashboard", icon: Home },
   { path: "/documents", label: "文件管理", icon: FileText },
+  { path: "/green-actions", label: "綠色行動", icon: TreePine },
   { path: "/experience", label: "經驗值", icon: Leaf },
   { path: "/indicators", label: "四大指標", icon: Activity },
   { path: "/data-health", label: "Data Health", icon: Shield },
+  { path: "/bank", label: "銀行端", icon: Building2 },
 ];
 
 export default function Layout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { currentFarmer, setFarmer, farmers } = useFarmer();
+  const { user, logout, isAdmin } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -25,23 +35,38 @@ export default function Layout() {
             <span className="text-xs text-gray-400 ml-2">DEMO</span>
           </Link>
           <div className="flex items-center gap-3">
-            <select
-              value={currentFarmer.id}
-              onChange={(e) => {
-                const f = farmers.find((x) => x.id === e.target.value);
-                if (f) setFarmer(f);
-              }}
-              className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm bg-white"
-            >
-              {farmers.map((f) => (
-                <option key={f.id} value={f.id}>
-                  {f.name} — {f.case_type}
-                </option>
-              ))}
-            </select>
+            {/* Admin and demo mode: show farmer switcher */}
+            {isAdmin && (
+              <select
+                value={currentFarmer.id}
+                onChange={(e) => {
+                  const f = farmers.find((x) => x.id === e.target.value);
+                  if (f) setFarmer(f);
+                }}
+                className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm bg-white"
+              >
+                {farmers.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.name} — {f.case_type}
+                  </option>
+                ))}
+              </select>
+            )}
             <div className="text-sm text-gray-500 hidden md:block">
-              {currentFarmer.farm}
+              {user?.display_name}
+              {user?.role === "admin" && (
+                <span className="ml-1 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">
+                  管理員
+                </span>
+              )}
             </div>
+            <button
+              onClick={handleLogout}
+              className="text-gray-400 hover:text-gray-600 p-1"
+              title="登出"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </header>

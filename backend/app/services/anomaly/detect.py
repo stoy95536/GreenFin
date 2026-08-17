@@ -16,9 +16,9 @@ Required anomaly types:
 Anomaly data must not be deleted — goes to Review Queue.
 """
 
-from datetime import date, datetime
 from typing import Optional
 
+from backend.app.core.dates import is_expired, parse_date, years_from_now
 from backend.app.models import (
     Anomaly,
     AnomalySeverity,
@@ -34,18 +34,29 @@ from backend.app.repositories import (
     get_document_repo,
     get_standardized_record_repo,
 )
+from backend.app.rules import get_active_engine
+from backend.app.services import audit
+
+# Date-bearing field names, used for expiry / format checks.
+EXPIRY_FIELD_NAMES = ("有效期限", "expiry", "到期日")
+EVENT_DATE_FIELD_NAMES = ("交易日期", "執行日期", "購入日期", "登記日期", "action_date")
+
+# A date more than this many years ahead is treated as a data-entry error.
+FUTURE_DATE_TOLERANCE_YEARS = 5
+
+# OCR confidence below this is considered unreliable.
+OCR_LOW_CONFIDENCE_THRESHOLD = 0.5
 
 
-# Required fields per domain (for MISSING_REQUIRED_FIELD detection)
-REQUIRED_FIELDS: dict[str, list[str]] = {
-    DataDomain.CERTIFICATION.value: ["認證機構", "有效期限"],
-    DataDomain.TRANSACTION.value: ["交易金額", "交易日期"],
-    DataDomain.GREEN_ACTION.value: ["活動名稱", "執行日期"],
-    DataDomain.IDENTITY.value: ["姓名"],
-    DataDomain.LAND_CROP.value: ["面積"],
-    DataDomain.INPUT_EQUIPMENT.value: ["設備名稱"],
-    DataDomain.LOAN_PURPOSE.value: ["申貸用途"],
-}
+def _required_fields_for(domain: DataDomain) -> list[str]:
+    """
+    Required fields for a domain, read from the active rule set.
+
+    Single source of truth: this previously duplicated the rule config in a module
+    constant, so editing the rule set changed Data Health but not anomaly detection.
+    """
+    rules = get_active_engine().get_data_health_rules()
+    return rules.domain_required_fields.get(domain.value, [])
 
 
 def detect_anomalies(record: StandardizedRecord) -> list[Anomaly]:
@@ -106,9 +117,15 @@ def detect_anomalies(record: StandardizedRecord) -> list[Anomaly]:
     if invalid_fmt:
         anomalies.append(invalid_fmt)
 
-    # Persist all anomalies
+    # Persist all anomalies and record each detection in the audit trail
     for anomaly in anomalies:
         anomaly_repo.create(anomaly)
+        audit.anomaly_detected(
+            record_id=anomaly.record_id,
+            anomaly_type=anomaly.anomaly_type.value,
+            severity=anomaly.severity.value,
+            description=anomaly.description,
+        )
 
     return anomalies
 
@@ -153,39 +170,32 @@ def get_review_queue(farmer_id: str) -> list[Anomaly]:
 
 def _check_expired(record: StandardizedRecord) -> Optional[Anomaly]:
     """Check for expired dates in record data."""
-    date_fields = ["有效期限", "expiry", "到期日"]
-    for field_name in date_fields:
+    for field_name in EXPIRY_FIELD_NAMES:
         value = record.data.get(field_name)
-        if value:
-            expiry = _parse_date(value)
-            if expiry and expiry < date.today():
-                return Anomaly(
-                    record_id=record.id,
-                    document_id=record.document_id,
-                    anomaly_type=AnomalyType.EXPIRED,
-                    severity=AnomalySeverity.CRITICAL,
-                    description=f"資料已過期: {field_name} = {value} (已早於今日)",
-                )
+        if is_expired(value):
+            return Anomaly(
+                record_id=record.id,
+                document_id=record.document_id,
+                anomaly_type=AnomalyType.EXPIRED,
+                severity=AnomalySeverity.CRITICAL,
+                description=f"資料已過期: {field_name} = {value} (已早於今日)",
+            )
     return None
 
 
 def _check_future_date(record: StandardizedRecord) -> Optional[Anomaly]:
-    """Check for dates unreasonably in the future (> 5 years)."""
-    date_fields = ["交易日期", "執行日期", "購入日期", "登記日期", "action_date"]
-    for field_name in date_fields:
+    """Check for dates unreasonably far in the future (data-entry error)."""
+    for field_name in EVENT_DATE_FIELD_NAMES:
         value = record.data.get(field_name)
-        if value:
-            d = _parse_date(value)
-            if d:
-                years_ahead = (d - date.today()).days / 365
-                if years_ahead > 5:
-                    return Anomaly(
-                        record_id=record.id,
-                        document_id=record.document_id,
-                        anomaly_type=AnomalyType.FUTURE_DATE,
-                        severity=AnomalySeverity.WARNING,
-                        description=f"日期異常偏向未來: {field_name} = {value}",
-                    )
+        years_ahead = years_from_now(value)
+        if years_ahead is not None and years_ahead > FUTURE_DATE_TOLERANCE_YEARS:
+            return Anomaly(
+                record_id=record.id,
+                document_id=record.document_id,
+                anomaly_type=AnomalyType.FUTURE_DATE,
+                severity=AnomalySeverity.WARNING,
+                description=f"日期異常偏向未來: {field_name} = {value}",
+            )
     return None
 
 
@@ -214,7 +224,10 @@ def _check_ocr_low_confidence(record: StandardizedRecord) -> Optional[Anomaly]:
     field_repo = get_document_field_repo()
     fields = field_repo.find_by(document_id=record.document_id)
 
-    low_fields = [f for f in fields if f.confidence is not None and f.confidence < 0.5]
+    low_fields = [
+        f for f in fields
+        if f.confidence is not None and f.confidence < OCR_LOW_CONFIDENCE_THRESHOLD
+    ]
     if low_fields:
         names = [f.field_name for f in low_fields]
         return Anomaly(
@@ -222,14 +235,17 @@ def _check_ocr_low_confidence(record: StandardizedRecord) -> Optional[Anomaly]:
             document_id=record.document_id,
             anomaly_type=AnomalyType.OCR_LOW_CONFIDENCE,
             severity=AnomalySeverity.WARNING,
-            description=f"OCR 辨識信心度過低 (<0.5) 的欄位: {', '.join(names)}",
+            description=(
+                f"OCR 辨識信心度過低 (<{OCR_LOW_CONFIDENCE_THRESHOLD}) 的欄位: "
+                f"{', '.join(names)}"
+            ),
         )
     return None
 
 
 def _check_missing_required(record: StandardizedRecord) -> Optional[Anomaly]:
-    """Check for missing required fields based on domain."""
-    required = REQUIRED_FIELDS.get(record.domain.value, [])
+    """Check for missing required fields, per the active rule set."""
+    required = _required_fields_for(record.domain)
     missing = [f for f in required if not record.data.get(f)]
 
     if missing:
@@ -294,11 +310,10 @@ def _check_conflict(record: StandardizedRecord) -> Optional[Anomaly]:
 
 
 def _check_invalid_format(record: StandardizedRecord) -> Optional[Anomaly]:
-    """Check for fields that should be dates/numbers but are not parseable."""
-    date_field_names = ["有效期限", "交易日期", "執行日期", "購入日期", "登記日期", "expiry"]
-    for field_name in date_field_names:
+    """Check for fields that should hold dates but cannot be parsed."""
+    for field_name in (*EXPIRY_FIELD_NAMES, *EVENT_DATE_FIELD_NAMES):
         value = record.data.get(field_name)
-        if value and not _parse_date(value):
+        if value and parse_date(value) is None:
             return Anomaly(
                 record_id=record.id,
                 document_id=record.document_id,
@@ -306,14 +321,4 @@ def _check_invalid_format(record: StandardizedRecord) -> Optional[Anomaly]:
                 severity=AnomalySeverity.WARNING,
                 description=f"欄位格式無法解析: {field_name} = '{value}'",
             )
-    return None
-
-
-def _parse_date(value: str) -> date | None:
-    """Try to parse a date string."""
-    for fmt in ("%Y-%m-%d", "%Y/%m/%d", "%Y.%m.%d"):
-        try:
-            return datetime.strptime(value, fmt).date()
-        except ValueError:
-            continue
     return None

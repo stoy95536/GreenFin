@@ -23,6 +23,7 @@ from backend.app.repositories import (
     get_document_repo,
     get_standardized_record_repo,
 )
+from backend.app.services import audit
 from backend.app.services.ocr.provider import OCRResult, get_ocr_provider
 
 
@@ -69,6 +70,13 @@ def run_ocr(document: Document, content: bytes) -> list[DocumentField]:
     document.status = DocumentStatus.OCR_COMPLETED
     doc_repo.update(document)
 
+    audit.ocr_completed(
+        document_id=document.id,
+        farmer_id=document.farmer_id,
+        field_count=len(created_fields),
+        provider=result.provider,
+    )
+
     return created_fields
 
 
@@ -87,12 +95,14 @@ def confirm_fields(document_id: str, corrections: Optional[dict[str, str]] = Non
     fields = field_repo.find_by(document_id=document_id)
 
     corrections = corrections or {}
+    corrected_ids: list[str] = []
 
     for field in fields:
         if field.id in corrections:
             field.raw_value = corrections[field.id]
             field.manually_corrected = True
             field_repo.update(field)
+            corrected_ids.append(field.id)
 
     # Update document status
     doc_repo = get_document_repo()
@@ -100,6 +110,13 @@ def confirm_fields(document_id: str, corrections: Optional[dict[str, str]] = Non
     if document:
         document.status = DocumentStatus.FIELDS_CONFIRMED
         doc_repo.update(document)
+
+    if corrected_ids:
+        audit.field_corrected(
+            document_id=document_id,
+            field_ids=corrected_ids,
+            actor_id=document.farmer_id if document else None,
+        )
 
     return field_repo.find_by(document_id=document_id)
 

@@ -15,6 +15,7 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+from backend.app.services import audit
 from backend.app.services.authorization.service import (
     AuthorizationError,
     check_authorization,
@@ -144,6 +145,7 @@ def api_bank_access_farmer_data(institution_id: str, farmer_id: str):
     """
     # Enforce authorization
     require_bank_authorization(farmer_id, institution_id)
+    audit.bank_data_accessed(institution_id, farmer_id, resource="farmer_data_summary")
 
     # If we get here, access is authorized — return summary
     from backend.app.services.experience.calculate import get_farmer_experience_summary

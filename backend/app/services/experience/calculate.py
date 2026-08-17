@@ -32,6 +32,7 @@ from backend.app.repositories import (
     get_standardized_record_repo,
 )
 from backend.app.rules import get_active_engine
+from backend.app.services import audit
 
 
 class ExperienceError(Exception):
@@ -196,7 +197,16 @@ def recalculate_farmer_experience(farmer_id: str) -> dict:
         except ExperienceError:
             pass  # Skip actions that can't be calculated (e.g., over limit)
 
-    return get_farmer_experience_summary(farmer_id)
+    summary = get_farmer_experience_summary(farmer_id)
+
+    audit.experience_recalculated(
+        farmer_id=farmer_id,
+        total=summary["total_experience"],
+        rule_version=summary["rule_version"],
+        transaction_count=summary["transaction_count"],
+    )
+
+    return summary
 
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────

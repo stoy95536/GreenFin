@@ -1,53 +1,64 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Activity } from "lucide-react";
 import { getIndicators, calculateIndicators } from "../api";
+import type { IndicatorsResponse, IndicatorType } from "../types";
 import { useFarmer } from "../context/FarmerContext";
 
-const INDICATOR_META: Record<string, { label: string; description: string }> = {
-  completeness: { label: "資料完整度", description: "衡量資料領域的覆蓋程度" },
-  credibility: { label: "資料可信度", description: "衡量資料的來源可靠性" },
-  business_maturity: { label: "經營成熟度", description: "衡量經營紀錄的豐富程度" },
-  green_maturity: { label: "綠色成熟度", description: "衡量綠色行動的深度與廣度" },
+const INDICATOR_META: { key: IndicatorType; label: string; description: string }[] = [
+  { key: "completeness", label: "資料完整度", description: "衡量資料領域的覆蓋程度" },
+  { key: "credibility", label: "資料可信度", description: "衡量資料的來源可靠性" },
+  { key: "business_maturity", label: "經營成熟度", description: "衡量經營紀錄的豐富程度" },
+  { key: "green_maturity", label: "綠色成熟度", description: "衡量綠色行動的深度與廣度" },
+];
+
+const LEVEL_GRADIENTS: Record<string, string> = {
+  L1: "from-red-400 to-red-500",
+  L2: "from-orange-400 to-orange-500",
+  L3: "from-yellow-400 to-yellow-500",
+  L4: "from-green-400 to-green-500",
+  L5: "from-greenfin-400 to-greenfin-600",
 };
 
 export default function Indicators() {
   const { currentFarmer } = useFarmer();
-  const FARMER_ID = currentFarmer.id;
-  const [data, setData] = useState<any>(null);
+  const farmerId = currentFarmer.id;
+
+  const [data, setData] = useState<IndicatorsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [calculating, setCalculating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     try {
-      const d = await getIndicators(FARMER_ID);
-      setData(d);
-    } catch { /* ignore */ }
-    setLoading(false);
-  };
+      setData(await getIndicators(farmerId));
+      setError(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "載入失敗");
+    } finally {
+      setLoading(false);
+    }
+  }, [farmerId]);
+
+  useEffect(() => {
+    setLoading(true);
+    void load();
+  }, [load]);
 
   const handleCalculate = async () => {
     setCalculating(true);
     try {
-      await calculateIndicators(FARMER_ID);
+      await calculateIndicators(farmerId);
       await load();
-    } catch { /* ignore */ }
-    setCalculating(false);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "計算失敗");
+    } finally {
+      setCalculating(false);
+    }
   };
-
-  useEffect(() => { setLoading(true); load(); }, [currentFarmer.id]);
 
   if (loading) return <p className="text-gray-400">載入中...</p>;
 
-  const indicators = data?.indicators || {};
-  const hasData = Object.keys(indicators).length > 0;
-
-  const levelColors: Record<string, string> = {
-    L1: "from-red-400 to-red-500",
-    L2: "from-orange-400 to-orange-500",
-    L3: "from-yellow-400 to-yellow-500",
-    L4: "from-green-400 to-green-500",
-    L5: "from-greenfin-400 to-greenfin-600",
-  };
+  const hasData = (data?.indicator_count ?? 0) > 0;
 
   return (
     <div className="space-y-6">
@@ -65,43 +76,56 @@ export default function Indicators() {
       </div>
 
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-sm text-yellow-800">
-        四項指標須獨立呈現，不得直接平均成信用總分。
+        {data?.note ?? "四項指標須獨立呈現，不得直接平均成信用總分。"}
       </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
 
       {!hasData ? (
         <p className="text-gray-400">尚未計算，請點擊「重新計算」</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {Object.entries(INDICATOR_META).map(([key, meta]) => {
-            const ind = indicators[key];
-            if (!ind) return null;
-            const gradientClass = levelColors[ind.level] || "from-gray-300 to-gray-400";
+          {INDICATOR_META.map(({ key, label, description }) => {
+            const indicator = data?.indicators[key];
+            if (!indicator) return null;
+            const gradient = LEVEL_GRADIENTS[indicator.level] ?? "from-gray-300 to-gray-400";
             return (
               <div key={key} className="bg-white rounded-xl shadow-sm border p-6">
-                <h3 className="text-lg font-semibold mb-1">{meta.label}</h3>
-                <p className="text-xs text-gray-400 mb-4">{meta.description}</p>
+                <h3 className="text-lg font-semibold mb-1">{label}</h3>
+                <p className="text-xs text-gray-400 mb-4">{description}</p>
 
-                {/* Score bar */}
-                <div className="relative mb-3">
+                <div className="mb-3">
                   <div className="w-full bg-gray-200 rounded-full h-4">
                     <div
-                      className={`bg-gradient-to-r ${gradientClass} h-4 rounded-full transition-all`}
-                      style={{ width: `${ind.score}%` }}
+                      className={`bg-gradient-to-r ${gradient} h-4 rounded-full transition-all`}
+                      style={{ width: `${indicator.score}%` }}
                     />
                   </div>
                   <div className="flex justify-between mt-1">
                     <span className="text-xs text-gray-400">0</span>
-                    <span className="text-sm font-bold">{ind.score}</span>
+                    <span className="text-sm font-bold">{indicator.score}</span>
                     <span className="text-xs text-gray-400">100</span>
                   </div>
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-600">等級: {ind.level}</span>
+                  <span className="text-sm font-medium text-gray-600">
+                    等級: {indicator.level}
+                  </span>
                   <span className="text-xs text-gray-400">
-                    {ind.calculated_at?.split("T")[0]}
+                    {indicator.calculated_at?.split("T")[0]}
                   </span>
                 </div>
+
+                {indicator.calculation_trace && (
+                  <p className="text-xs text-gray-400 mt-3 border-t pt-2">
+                    {indicator.calculation_trace}
+                  </p>
+                )}
               </div>
             );
           })}

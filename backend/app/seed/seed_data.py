@@ -14,8 +14,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
+# Windows consoles default to a legacy codepage (e.g. cp950) when stdout is piped,
+# which crashes on the checkmarks below. Force UTF-8 so the script is safe to pipe.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 from backend.app.repositories import (
-    DATA_DIR,
+    get_data_dir,
     get_anomaly_repo,
     get_authorization_repo,
     get_audit_log_repo,
@@ -123,7 +128,7 @@ RULESET_ID = "ruleset-demo-v1"
 def seed_all():
     """Populate all JSON data files with demo seed data."""
     print("Seeding GreenFin demo data...")
-    print(f"Data directory: {DATA_DIR}")
+    print(f"Data directory: {get_data_dir()}")
 
     # ─── Rule Set ─────────────────────────────────────────────────────────────
     rule_repo = get_rule_set_repo()
@@ -146,11 +151,46 @@ def seed_all():
                 },
             },
             "indicators": {
-                "completeness_weights": {
-                    "core_required": 3,
-                    "important_supporting": 2,
-                    "supplementary": 1,
+                # 資料完整度: which tier each domain belongs to, and each tier's weight
+                "completeness": {
+                    "tier_weights": {
+                        "core_required": 3,
+                        "important_supporting": 2,
+                        "supplementary": 1,
+                    },
+                    "domain_tiers": {
+                        "IDENTITY": "core_required",
+                        "LAND_CROP": "core_required",
+                        "TRANSACTION": "important_supporting",
+                        "CERTIFICATION": "important_supporting",
+                        "GREEN_ACTION": "important_supporting",
+                        "INPUT_EQUIPMENT": "supplementary",
+                        "LOAN_PURPOSE": "supplementary",
+                    },
                 },
+                # 資料可信度 scoring coefficients
+                "credibility": {
+                    "source_level_scores": {"V0": 0, "V1": 33, "V2": 67, "V3": 100},
+                    "anomaly_penalty_per": 5,
+                    "anomaly_penalty_max": 30,
+                    "traceability_bonus_max": 10,
+                },
+                # 經營成熟度 scoring caps and saturation points
+                "business_maturity": {
+                    "variety_max": 40,
+                    "volume_max": 30,
+                    "volume_saturation_records": 20,
+                    "document_max": 20,
+                    "document_saturation_count": 10,
+                    "transaction_bonus": 10,
+                },
+                # 綠色成熟度 scoring caps
+                "green_maturity": {
+                    "experience_max": 40,
+                    "breadth_per_dimension": 10,
+                    "quality_max": 20,
+                },
+                # Descriptive factor lists (documentation of what each indicator considers)
                 "credibility_factors": [
                     "source_level", "expiry", "cross_consistency",
                     "duplicates", "anomalies", "traceability",
@@ -163,9 +203,12 @@ def seed_all():
                     "experience_value", "dimension_breadth", "duration",
                     "v2_v3_ratio", "anomalies",
                 ],
+                # L1..L5 bands per indicator
                 "level_thresholds": {
                     "completeness": [[0, 39], [40, 59], [60, 79], [80, 94], [95, 100]],
                     "credibility": [[0, 19], [20, 39], [40, 59], [60, 79], [80, 100]],
+                    "business_maturity": [[0, 19], [20, 39], [40, 59], [60, 79], [80, 100]],
+                    "green_maturity": [[0, 19], [20, 39], [40, 59], [60, 79], [80, 100]],
                 },
             },
             "data_health": {
@@ -195,7 +238,8 @@ def seed_all():
     user_repo.create(User(id=USER_B_ID, username="lin_farmer", display_name="林阿花", role=UserRole.FARMER))
     user_repo.create(User(id=USER_C_ID, username="wang_farmer", display_name="王大明", role=UserRole.FARMER))
     user_repo.create(User(id=USER_BANK_ID, username="taishin_reviewer", display_name="台新銀行審查員", role=UserRole.BANK))
-    print("  ✓ Users (4)")
+    user_repo.create(User(id="user-admin", username="admin", display_name="系統管理員", role=UserRole.ADMIN))
+    print("  ✓ Users (5)")
 
     # ─── Farmers ──────────────────────────────────────────────────────────────
     farmer_repo = get_farmer_repo()
@@ -575,7 +619,7 @@ def seed_all():
     ))
     print("  ✓ Audit Logs (2)")
 
-    print(f"\n✓ Seed complete. Data files in: {DATA_DIR}")
+    print(f"\n✓ Seed complete. Data files in: {get_data_dir()}")
     print("  Case A (陳小農): Healthy — GREEN")
     print("  Case B (林阿花): Needs Improvement — YELLOW")
     print("  Case C (王大明): Abnormal — RED")

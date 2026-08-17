@@ -36,6 +36,9 @@ def api_get_indicators(farmer_id: str):
             "details": r.details,
             "rule_version": r.rule_version,
             "calculated_at": r.calculated_at,
+            # Required for "Explainable by Design" (AGENTS.md §6): the farmer must be
+            # able to see how the score was produced, not just the number.
+            "calculation_trace": r.calculation_trace,
         }
 
     return {

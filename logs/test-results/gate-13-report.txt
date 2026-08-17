@@ -1,0 +1,34 @@
+GREENFIN DEVELOPMENT TEST RECORD
+
+Gate:
+GATE-13 — Report (Bank Information Package)
+
+Timestamp:
+2026-08-17T17:00:00+08:00
+
+Test Scope:
+Bank information package: authorization, data, rule version, evidence, disclaimer, timestamp.
+
+Commands:
+- python -m pytest backend/tests/ tests/ -q --tb=short
+
+Tests Executed:
+
+GATE-13 New Tests (15):
+- test_gate13_report.py (15 tests): PASSED
+  - TestPackageGeneration (13): generates, has authorization, farmer, experience, indicators,
+    data health, evidence summary, traceability, disclaimer, timestamp, rule versions,
+    unauthorized raises, nonexistent raises
+  - TestReportAPI (2): api returns package, unauthorized 403
+
+Regression Tests (335):
+- GATE-01 through GATE-12: PASSED
+
+Passed:
+350
+
+Failed:
+0
+
+FINAL GATE STATUS:
+PASS
