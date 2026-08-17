@@ -1,0 +1,62 @@
+[
+  {
+    "id": "field-a1-cert-org",
+    "created_at": "2026-08-17T05:02:13.978843+00:00",
+    "updated_at": null,
+    "document_id": "doc-a1-cert",
+    "field_name": "認證機構",
+    "raw_value": "慈心有機農業發展基金會",
+    "normalized_value": "慈心有機農業發展基金會",
+    "confidence": 0.98,
+    "source": "ocr",
+    "manually_corrected": false
+  },
+  {
+    "id": "field-a1-cert-expiry",
+    "created_at": "2026-08-17T05:02:13.979269+00:00",
+    "updated_at": null,
+    "document_id": "doc-a1-cert",
+    "field_name": "有效期限",
+    "raw_value": "2027/06/30",
+    "normalized_value": "2027-06-30",
+    "confidence": 0.95,
+    "source": "ocr",
+    "manually_corrected": false
+  },
+  {
+    "id": "field-a2-amount",
+    "created_at": "2026-08-17T05:02:13.985283+00:00",
+    "updated_at": null,
+    "document_id": "doc-a2-invoice",
+    "field_name": "出貨金額",
+    "raw_value": "NT$125,000",
+    "normalized_value": "125000",
+    "confidence": 0.92,
+    "source": "ocr",
+    "manually_corrected": false
+  },
+  {
+    "id": "field-b1-desc",
+    "created_at": "2026-08-17T05:02:13.993165+00:00",
+    "updated_at": null,
+    "document_id": "doc-b1-photo",
+    "field_name": "活動描述",
+    "raw_value": "自製堆肥施用",
+    "normalized_value": "自製堆肥施用",
+    "confidence": 0.6,
+    "source": "ocr",
+    "manually_corrected": true
+  },
+  {
+    "id": "field-c1-expiry",
+    "created_at": "2026-08-17T05:02:13.999284+00:00",
+    "updated_at": null,
+    "document_id": "doc-c1-expired",
+    "field_name": "有效期限",
+    "raw_value": "2023/12/31",
+    "normalized_value": "2023-12-31",
+    "confidence": 0.85,
+    "source": "ocr",
+    "manually_corrected": false
+  }
+]

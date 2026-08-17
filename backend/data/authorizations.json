@@ -1,0 +1,21 @@
+[
+  {
+    "id": "auth-a-to-bank",
+    "created_at": "2026-08-17T05:02:14.304411+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-a-chen",
+    "institution_id": "bank-taishin",
+    "purpose": "農業設備貸款申請之授信補充資料",
+    "data_scope": [
+      "IDENTITY",
+      "LAND_CROP",
+      "TRANSACTION",
+      "GREEN_ACTION",
+      "CERTIFICATION"
+    ],
+    "start_at": "2026-08-01T00:00:00+08:00",
+    "expire_at": "2026-11-01T00:00:00+08:00",
+    "status": "ACTIVE",
+    "revoked_at": null
+  }
+]

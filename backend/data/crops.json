@@ -1,0 +1,29 @@
+[
+  {
+    "id": "crop-a-rice",
+    "created_at": "2026-08-17T05:02:13.929529+00:00",
+    "updated_at": null,
+    "farm_id": "farm-a-green-field",
+    "name": "稻米",
+    "variety": "台南11號",
+    "planting_season": "一期作"
+  },
+  {
+    "id": "crop-b-vegetables",
+    "created_at": "2026-08-17T05:02:13.929947+00:00",
+    "updated_at": null,
+    "farm_id": "farm-b-sunrise",
+    "name": "有機蔬菜",
+    "variety": "小白菜",
+    "planting_season": "全年"
+  },
+  {
+    "id": "crop-c-fruit",
+    "created_at": "2026-08-17T05:02:13.939318+00:00",
+    "updated_at": null,
+    "farm_id": "farm-c-old-plot",
+    "name": "芒果",
+    "variety": "愛文",
+    "planting_season": "夏季"
+  }
+]

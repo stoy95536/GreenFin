@@ -1,0 +1,171 @@
+[
+  {
+    "id": "ruleset-demo-v1",
+    "created_at": "2026-08-17T05:02:13.864198+00:00",
+    "updated_at": null,
+    "version": "GREENFIN_DEMO_V1",
+    "name": "Demo Rule Set V1",
+    "description": "Initial demo rules for experience, indicators, and data health.",
+    "config": {
+      "experience": {
+        "dimensions": [
+          "減量",
+          "增匯",
+          "循環",
+          "綠色治理"
+        ],
+        "annual_limit_per_dimension": 250,
+        "total_limit": 1000,
+        "base_values": {
+          "BASIC": 20,
+          "SUSTAINED": 50,
+          "CERTIFIED": 100
+        },
+        "source_ratios": {
+          "V3": 1.0,
+          "V2": 1.0,
+          "V1": 0.5,
+          "V0": 0.0
+        },
+        "levels": {
+          "L0": [
+            0,
+            0
+          ],
+          "L1": [
+            1,
+            200
+          ],
+          "L2": [
+            201,
+            400
+          ],
+          "L3": [
+            401,
+            600
+          ],
+          "L4": [
+            601,
+            800
+          ],
+          "L5": [
+            801,
+            1000
+          ]
+        }
+      },
+      "indicators": {
+        "completeness_weights": {
+          "core_required": 3,
+          "important_supporting": 2,
+          "supplementary": 1
+        },
+        "credibility_factors": [
+          "source_level",
+          "expiry",
+          "cross_consistency",
+          "duplicates",
+          "anomalies",
+          "traceability"
+        ],
+        "maturity_factors": [
+          "record_period",
+          "data_variety",
+          "update_continuity",
+          "missing_months",
+          "cross_validation"
+        ],
+        "green_maturity_factors": [
+          "experience_value",
+          "dimension_breadth",
+          "duration",
+          "v2_v3_ratio",
+          "anomalies"
+        ],
+        "level_thresholds": {
+          "completeness": [
+            [
+              0,
+              39
+            ],
+            [
+              40,
+              59
+            ],
+            [
+              60,
+              79
+            ],
+            [
+              80,
+              94
+            ],
+            [
+              95,
+              100
+            ]
+          ],
+          "credibility": [
+            [
+              0,
+              19
+            ],
+            [
+              20,
+              39
+            ],
+            [
+              40,
+              59
+            ],
+            [
+              60,
+              79
+            ],
+            [
+              80,
+              100
+            ]
+          ]
+        }
+      },
+      "data_health": {
+        "priority_order": [
+          "GRAY",
+          "RED",
+          "YELLOW",
+          "GREEN"
+        ],
+        "domain_required_fields": {
+          "IDENTITY": [
+            "姓名"
+          ],
+          "LAND_CROP": [
+            "面積"
+          ],
+          "TRANSACTION": [
+            "交易金額",
+            "交易日期"
+          ],
+          "GREEN_ACTION": [
+            "活動名稱"
+          ],
+          "CERTIFICATION": [
+            "認證機構",
+            "有效期限"
+          ],
+          "LOAN_PURPOSE": [
+            "申貸用途"
+          ]
+        },
+        "expiry_warning_days": 90,
+        "critical_anomaly_types": [
+          "EXPIRED",
+          "VERIFICATION_FAILED",
+          "MISSING_REQUIRED_FIELD"
+        ]
+      }
+    },
+    "is_active": true
+  }
+]

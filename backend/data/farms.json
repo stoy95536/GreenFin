@@ -1,0 +1,38 @@
+[
+  {
+    "id": "farm-a-green-field",
+    "created_at": "2026-08-17T05:02:13.915513+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-a-chen",
+    "name": "綠田友善農場",
+    "location": "台南市後壁區新嘉里",
+    "area_hectares": 2.5,
+    "crop_ids": [
+      "crop-a-rice"
+    ]
+  },
+  {
+    "id": "farm-b-sunrise",
+    "created_at": "2026-08-17T05:02:13.915844+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-b-lin",
+    "name": "日出有機園",
+    "location": "嘉義縣民雄鄉",
+    "area_hectares": 1.2,
+    "crop_ids": [
+      "crop-b-vegetables"
+    ]
+  },
+  {
+    "id": "farm-c-old-plot",
+    "created_at": "2026-08-17T05:02:13.922889+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-c-wang",
+    "name": "舊園地",
+    "location": "雲林縣斗六市",
+    "area_hectares": 0.8,
+    "crop_ids": [
+      "crop-c-fruit"
+    ]
+  }
+]

@@ -1,0 +1,71 @@
+[
+  {
+    "id": "exp-a1",
+    "created_at": "2026-08-17T05:02:14.101712+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-a-chen",
+    "green_action_id": "ga-a1-organic",
+    "dimension": "減量",
+    "base_value": 100,
+    "source_recognition_ratio": 1.0,
+    "effective_value": 100.0,
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00",
+    "input_evidence_ids": [
+      "doc-a1-cert",
+      "rec-a1-certification"
+    ],
+    "calculation_trace": "CERTIFIED(100) × V3(1.0) = 100"
+  },
+  {
+    "id": "exp-a2",
+    "created_at": "2026-08-17T05:02:14.102075+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-a-chen",
+    "green_action_id": "ga-a2-solar",
+    "dimension": "減量",
+    "base_value": 50,
+    "source_recognition_ratio": 1.0,
+    "effective_value": 50.0,
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00",
+    "input_evidence_ids": [],
+    "calculation_trace": "SUSTAINED(50) × V2(1.0) = 50 (ASSUMPTION: 設備佐證為V2)"
+  },
+  {
+    "id": "exp-b1",
+    "created_at": "2026-08-17T05:02:14.108420+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-b-lin",
+    "green_action_id": "ga-b1-compost",
+    "dimension": "循環",
+    "base_value": 20,
+    "source_recognition_ratio": 0.5,
+    "effective_value": 10.0,
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00",
+    "input_evidence_ids": [
+      "doc-b1-photo",
+      "rec-b1-activity"
+    ],
+    "calculation_trace": "BASIC(20) × V1(0.5) = 10"
+  },
+  {
+    "id": "exp-c1",
+    "created_at": "2026-08-17T05:02:14.115373+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-c-wang",
+    "green_action_id": "ga-c1-claim",
+    "dimension": "綠色治理",
+    "base_value": 20,
+    "source_recognition_ratio": 0.0,
+    "effective_value": 0.0,
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00",
+    "input_evidence_ids": [
+      "doc-c1-expired",
+      "rec-c1-expired-cert"
+    ],
+    "calculation_trace": "BASIC(20) × V0(0.0) = 0 (來源不可使用，不認列)"
+  }
+]

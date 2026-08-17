@@ -1,0 +1,290 @@
+[
+  {
+    "id": "dh-a-identity",
+    "created_at": "2026-08-17T05:02:14.192097+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-a-chen",
+    "domain": "IDENTITY",
+    "status": "GREEN",
+    "reasons": [
+      "身分資料完整且已核驗"
+    ],
+    "actions": [],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  },
+  {
+    "id": "dh-a-land_crop",
+    "created_at": "2026-08-17T05:02:14.192599+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-a-chen",
+    "domain": "LAND_CROP",
+    "status": "GREEN",
+    "reasons": [
+      "土地與作物資料完整"
+    ],
+    "actions": [],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  },
+  {
+    "id": "dh-a-transaction",
+    "created_at": "2026-08-17T05:02:14.202067+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-a-chen",
+    "domain": "TRANSACTION",
+    "status": "GREEN",
+    "reasons": [
+      "交易紀錄由農會提供 (V2)"
+    ],
+    "actions": [],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  },
+  {
+    "id": "dh-a-green_action",
+    "created_at": "2026-08-17T05:02:14.207319+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-a-chen",
+    "domain": "GREEN_ACTION",
+    "status": "GREEN",
+    "reasons": [
+      "有機認證有效 (V3)"
+    ],
+    "actions": [],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  },
+  {
+    "id": "dh-a-certification",
+    "created_at": "2026-08-17T05:02:14.211912+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-a-chen",
+    "domain": "CERTIFICATION",
+    "status": "GREEN",
+    "reasons": [
+      "認證在效期內"
+    ],
+    "actions": [],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  },
+  {
+    "id": "dh-a-loan_purpose",
+    "created_at": "2026-08-17T05:02:14.217235+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-a-chen",
+    "domain": "LOAN_PURPOSE",
+    "status": "GRAY",
+    "reasons": [
+      "尚未申貸"
+    ],
+    "actions": [],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  },
+  {
+    "id": "dh-b-identity",
+    "created_at": "2026-08-17T05:02:14.222986+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-b-lin",
+    "domain": "IDENTITY",
+    "status": "GREEN",
+    "reasons": [
+      "身分資料基本完整"
+    ],
+    "actions": [],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  },
+  {
+    "id": "dh-b-land_crop",
+    "created_at": "2026-08-17T05:02:14.228730+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-b-lin",
+    "domain": "LAND_CROP",
+    "status": "YELLOW",
+    "reasons": [
+      "土地面積待補地籍證明"
+    ],
+    "actions": [
+      "建議補上地籍謄本"
+    ],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  },
+  {
+    "id": "dh-b-transaction",
+    "created_at": "2026-08-17T05:02:14.240251+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-b-lin",
+    "domain": "TRANSACTION",
+    "status": "YELLOW",
+    "reasons": [
+      "僅有部分交易紀錄"
+    ],
+    "actions": [
+      "建議補充近6個月出貨資料"
+    ],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  },
+  {
+    "id": "dh-b-green_action",
+    "created_at": "2026-08-17T05:02:14.246016+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-b-lin",
+    "domain": "GREEN_ACTION",
+    "status": "YELLOW",
+    "reasons": [
+      "照片佐證強度不足 (V1)"
+    ],
+    "actions": [
+      "建議取得第三方認證"
+    ],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  },
+  {
+    "id": "dh-b-certification",
+    "created_at": "2026-08-17T05:02:14.250648+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-b-lin",
+    "domain": "CERTIFICATION",
+    "status": "GRAY",
+    "reasons": [
+      "未提供認證文件"
+    ],
+    "actions": [
+      "可申請產銷履歷認證"
+    ],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  },
+  {
+    "id": "dh-b-loan_purpose",
+    "created_at": "2026-08-17T05:02:14.255284+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-b-lin",
+    "domain": "LOAN_PURPOSE",
+    "status": "GRAY",
+    "reasons": [
+      "尚未申貸"
+    ],
+    "actions": [],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  },
+  {
+    "id": "dh-c-identity",
+    "created_at": "2026-08-17T05:02:14.271886+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-c-wang",
+    "domain": "IDENTITY",
+    "status": "YELLOW",
+    "reasons": [
+      "部分身分資料待確認"
+    ],
+    "actions": [
+      "補充身分證正反面"
+    ],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  },
+  {
+    "id": "dh-c-land_crop",
+    "created_at": "2026-08-17T05:02:14.277621+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-c-wang",
+    "domain": "LAND_CROP",
+    "status": "RED",
+    "reasons": [
+      "土地資料缺失，無法確認經營範圍"
+    ],
+    "actions": [
+      "需補土地相關證明"
+    ],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  },
+  {
+    "id": "dh-c-transaction",
+    "created_at": "2026-08-17T05:02:14.283471+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-c-wang",
+    "domain": "TRANSACTION",
+    "status": "RED",
+    "reasons": [
+      "無有效交易紀錄"
+    ],
+    "actions": [
+      "需補充任何出貨或銷售證明"
+    ],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  },
+  {
+    "id": "dh-c-green_action",
+    "created_at": "2026-08-17T05:02:14.288418+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-c-wang",
+    "domain": "GREEN_ACTION",
+    "status": "RED",
+    "reasons": [
+      "綠色行動來源無法核驗 (V0)"
+    ],
+    "actions": [
+      "需重新提交有效佐證"
+    ],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  },
+  {
+    "id": "dh-c-certification",
+    "created_at": "2026-08-17T05:02:14.293788+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-c-wang",
+    "domain": "CERTIFICATION",
+    "status": "RED",
+    "reasons": [
+      "認證已過期且重複上傳"
+    ],
+    "actions": [
+      "需取得有效認證或移除過期文件"
+    ],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  },
+  {
+    "id": "dh-c-loan_purpose",
+    "created_at": "2026-08-17T05:02:14.298497+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-c-wang",
+    "domain": "LOAN_PURPOSE",
+    "status": "GRAY",
+    "reasons": [
+      "尚未申貸"
+    ],
+    "actions": [],
+    "affected_evidence_ids": [],
+    "rule_version": "GREENFIN_DEMO_V1",
+    "calculated_at": "2026-08-17T10:00:00+08:00"
+  }
+]

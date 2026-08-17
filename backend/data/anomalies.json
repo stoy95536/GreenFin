@@ -1,0 +1,41 @@
+[
+  {
+    "id": "anom-c1-expired",
+    "created_at": "2026-08-17T05:02:14.060658+00:00",
+    "updated_at": null,
+    "record_id": "rec-c1-expired-cert",
+    "document_id": "doc-c1-expired",
+    "anomaly_type": "EXPIRED",
+    "severity": "CRITICAL",
+    "description": "農藥使用證明已於 2023-12-31 過期 (DEMO)",
+    "is_resolved": false,
+    "resolved_by": null,
+    "resolved_at": null
+  },
+  {
+    "id": "anom-c2-duplicate",
+    "created_at": "2026-08-17T05:02:14.061168+00:00",
+    "updated_at": null,
+    "record_id": "rec-c2-duplicate",
+    "document_id": "doc-c2-duplicate",
+    "anomaly_type": "DUPLICATE",
+    "severity": "WARNING",
+    "description": "與 doc-c1-expired 檔案 hash 相同，疑似重複上傳 (DEMO)",
+    "is_resolved": false,
+    "resolved_by": null,
+    "resolved_at": null
+  },
+  {
+    "id": "anom-c1-verfail",
+    "created_at": "2026-08-17T05:02:14.068875+00:00",
+    "updated_at": null,
+    "record_id": "rec-c1-expired-cert",
+    "document_id": "doc-c1-expired",
+    "anomaly_type": "VERIFICATION_FAILED",
+    "severity": "CRITICAL",
+    "description": "來源核驗失敗，無法確認文件真實性 (DEMO)",
+    "is_resolved": false,
+    "resolved_by": null,
+    "resolved_at": null
+  }
+]

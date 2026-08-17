@@ -1,0 +1,41 @@
+[
+  {
+    "id": "farmer-a-chen",
+    "created_at": "2026-08-17T05:02:13.883038+00:00",
+    "updated_at": null,
+    "user_id": "user-farmer-a",
+    "real_name": "陳小農",
+    "id_number_masked": null,
+    "phone": "0912-345-678",
+    "address": "台南市後壁區",
+    "farm_ids": [
+      "farm-a-green-field"
+    ]
+  },
+  {
+    "id": "farmer-b-lin",
+    "created_at": "2026-08-17T05:02:13.883394+00:00",
+    "updated_at": null,
+    "user_id": "user-farmer-b",
+    "real_name": "林阿花",
+    "id_number_masked": null,
+    "phone": "0923-456-789",
+    "address": "嘉義縣民雄鄉",
+    "farm_ids": [
+      "farm-b-sunrise"
+    ]
+  },
+  {
+    "id": "farmer-c-wang",
+    "created_at": "2026-08-17T05:02:13.893393+00:00",
+    "updated_at": null,
+    "user_id": "user-farmer-c",
+    "real_name": "王大明",
+    "id_number_masked": null,
+    "phone": "0934-567-890",
+    "address": "雲林縣斗六市",
+    "farm_ids": [
+      "farm-c-old-plot"
+    ]
+  }
+]

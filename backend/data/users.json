@@ -1,0 +1,38 @@
+[
+  {
+    "id": "user-farmer-a",
+    "created_at": "2026-08-17T05:02:13.865304+00:00",
+    "updated_at": null,
+    "username": "chen_farmer",
+    "display_name": "陳小農",
+    "role": "farmer",
+    "is_active": true
+  },
+  {
+    "id": "user-farmer-b",
+    "created_at": "2026-08-17T05:02:13.865670+00:00",
+    "updated_at": null,
+    "username": "lin_farmer",
+    "display_name": "林阿花",
+    "role": "farmer",
+    "is_active": true
+  },
+  {
+    "id": "user-farmer-c",
+    "created_at": "2026-08-17T05:02:13.871762+00:00",
+    "updated_at": null,
+    "username": "wang_farmer",
+    "display_name": "王大明",
+    "role": "farmer",
+    "is_active": true
+  },
+  {
+    "id": "user-bank-001",
+    "created_at": "2026-08-17T05:02:13.876145+00:00",
+    "updated_at": null,
+    "username": "taishin_reviewer",
+    "display_name": "台新銀行審查員",
+    "role": "bank",
+    "is_active": true
+  }
+]

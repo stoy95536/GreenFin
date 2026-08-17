@@ -89,3 +89,885 @@ Next Recommended Step:
 Start GATE-01 — Project Foundation only after reading AGENTS.md and required specs.
 
 ============================================================
+
+============================================================
+AI CHANGE RECORD
+============================================================
+
+Timestamp:
+2026-08-17T11:12:00+08:00
+
+Agent:
+Kiro (Claude) — GreenFin IDE Session
+
+Task:
+GATE-01 — Project Foundation
+
+Stage:
+GATE-01
+
+Status:
+COMPLETED
+
+Summary:
+Implemented full project foundation for GreenFin. Created backend with FastAPI,
+SQLAlchemy engine (SQLite), Alembic migration framework, health endpoint, and
+module structure per ARCHITECTURE.md. Created frontend with React 18, TypeScript,
+Vite 6, Tailwind CSS, and a basic App component showing API health status.
+Wrote 27 tests covering all GATE-01 requirements. All tests pass. Functional
+verification confirmed backend serves /api/health (HTTP 200, database connected),
+SQLite DB file created, and frontend builds to dist/ successfully.
+
+Files Created:
+- backend/.env
+- backend/alembic.ini
+- backend/alembic/env.py
+- backend/alembic/script.py.mako
+- backend/alembic/versions/__init__.py
+- backend/alembic/versions/001_initial.py
+- backend/app/__init__.py
+- backend/app/api/__init__.py
+- backend/app/api/health.py
+- backend/app/core/__init__.py
+- backend/app/core/config.py
+- backend/app/core/database.py
+- backend/app/main.py
+- backend/app/models/__init__.py
+- backend/app/repositories/__init__.py
+- backend/app/rules/__init__.py
+- backend/app/schemas/__init__.py
+- backend/app/seed/__init__.py
+- backend/app/services/__init__.py
+- backend/app/services/anomaly/__init__.py
+- backend/app/services/authorization/__init__.py
+- backend/app/services/data_health/__init__.py
+- backend/app/services/documents/__init__.py
+- backend/app/services/experience/__init__.py
+- backend/app/services/indicators/__init__.py
+- backend/app/services/normalization/__init__.py
+- backend/app/services/ocr/__init__.py
+- backend/app/services/reports/__init__.py
+- backend/app/services/verification/__init__.py
+- backend/pytest.ini
+- backend/requirements.txt
+- backend/tests/__init__.py
+- backend/tests/conftest.py
+- backend/tests/test_gate01_config.py
+- backend/tests/test_gate01_database.py
+- backend/tests/test_gate01_health.py
+- backend/tests/test_gate01_migration.py
+- frontend/index.html
+- frontend/package.json
+- frontend/postcss.config.js
+- frontend/public/vite.svg
+- frontend/src/App.tsx
+- frontend/src/index.css
+- frontend/src/main.tsx
+- frontend/src/vite-env.d.ts
+- frontend/tailwind.config.js
+- frontend/tsconfig.app.json
+- frontend/tsconfig.json
+- frontend/tsconfig.node.json
+- frontend/vite.config.ts
+- tests/test_gate01_frontend_build.py
+
+Files Modified:
+- None (all new creation in this gate)
+
+Files Deleted:
+- frontend/README.md (replaced by full Vite project scaffold)
+
+Files Renamed / Moved:
+- None
+
+Database Changes:
+- SQLite database created via SQLAlchemy engine (greenfin_demo.db)
+- Alembic migration 001 (baseline, no tables yet — tables added in GATE-02)
+- Foreign keys pragma enabled
+- WAL journal mode enabled
+
+Business Rule Changes:
+- None. GREENFIN_DEMO_V1 rule version configured in settings only.
+
+API Changes:
+- GET /api/health — returns application health status with DB connectivity check
+
+Tests Added:
+- backend/tests/test_gate01_config.py (5 tests)
+- backend/tests/test_gate01_database.py (4 tests)
+- backend/tests/test_gate01_health.py (7 tests)
+- backend/tests/test_gate01_migration.py (5 tests)
+- tests/test_gate01_frontend_build.py (6 tests)
+
+Tests Executed:
+- python -m pytest backend/tests/ tests/test_gate01_frontend_build.py -q
+
+Test Result:
+27 passed in 0.19s
+
+Functional Verification:
+- Backend: uvicorn started on 127.0.0.1:8000, /api/health returned HTTP 200
+  Response: {"status":"healthy","app_name":"GreenFin","environment":"development",
+  "demo_mode":true,"rule_version":"GREENFIN_DEMO_V1","database":"connected",
+  "timestamp":"2026-08-17T03:10:07.225071+00:00"}
+- Database: greenfin_demo.db created (4096 bytes)
+- Frontend: dist/index.html generated with correct content, assets bundled
+
+Known Issues:
+- pytest-asyncio deprecation warning about asyncio_default_fixture_loop_scope (cosmetic)
+- Exit code display artifact in Windows cmd terminal (does not affect actual test results)
+
+Next Recommended Step:
+Start GATE-02 — Core Data Model (User, Farmer, Farm, Document, Evidence, etc.)
+
+============================================================
+
+============================================================
+AI CHANGE RECORD
+============================================================
+
+Timestamp:
+2026-08-17T11:40:00+08:00
+
+Agent:
+Kiro (Claude) — GreenFin IDE Session
+
+Task:
+GATE-02 — Core Data Model
+
+Stage:
+GATE-02
+
+Status:
+COMPLETED
+
+Summary:
+Implemented all 18 domain entities as Pydantic models with JSON file-based storage
+(per ADR-0006). Created generic JsonRepository with full CRUD operations. Populated
+seed data for 3 demo cases (Case A healthy/GREEN, Case B needs improvement/YELLOW,
+Case C abnormal/RED). Updated health endpoint to check JSON data directory. Migrated
+from SQLAlchemy-based approach to JSON files as user requested for Demo simplicity.
+All 90 tests pass (84 backend + 6 frontend).
+
+Files Created:
+- backend/app/models/base.py
+- backend/app/models/enums.py
+- backend/app/models/user.py
+- backend/app/models/farm.py
+- backend/app/models/document.py
+- backend/app/models/verification.py
+- backend/app/models/green_action.py
+- backend/app/models/indicators.py
+- backend/app/models/authorization.py
+- backend/app/models/audit.py
+- backend/app/repositories/json_repository.py
+- backend/app/seed/seed_data.py
+- backend/data/users.json
+- backend/data/farmers.json
+- backend/data/banks.json
+- backend/data/farms.json
+- backend/data/crops.json
+- backend/data/documents.json
+- backend/data/document_fields.json
+- backend/data/standardized_records.json
+- backend/data/verification_results.json
+- backend/data/anomalies.json
+- backend/data/green_actions.json
+- backend/data/experience_transactions.json
+- backend/data/indicator_results.json
+- backend/data/data_health_results.json
+- backend/data/rule_sets.json
+- backend/data/authorizations.json
+- backend/data/bank_cases.json
+- backend/data/audit_logs.json
+- backend/tests/test_gate02_models.py
+- backend/tests/test_gate02_repository.py
+- backend/tests/test_gate02_seed.py
+
+Files Modified:
+- backend/app/models/__init__.py (rewrote to export all new models)
+- backend/app/repositories/__init__.py (rewrote with factory functions)
+- backend/app/api/health.py (switched from SQL to JSON data dir check)
+- backend/app/main.py (removed SQLAlchemy lifespan, uses DATA_DIR)
+- backend/tests/conftest.py (rewrote for JSON-based temp dir testing)
+- backend/tests/test_gate01_health.py (updated for new health response)
+- backend/tests/test_gate01_database.py (rewrote for JSON repository)
+- docs/DECISIONS.md (added ADR-0006)
+
+Files Deleted:
+- None
+
+Files Renamed / Moved:
+- None
+
+Database Changes:
+- Replaced SQLAlchemy/SQLite with JSON file storage (ADR-0006)
+- 18 JSON data files in backend/data/ (one per entity type)
+
+Business Rule Changes:
+- None. GREENFIN_DEMO_V1 rule set configuration stored in rule_sets.json
+  with experience base values, source ratios, and dimension limits.
+
+API Changes:
+- GET /api/health now returns data_files count and farmers_count fields
+
+Tests Added:
+- backend/tests/test_gate02_models.py (24 tests: validation, enums, constraints)
+- backend/tests/test_gate02_repository.py (16 tests: CRUD, queries, relationships)
+- backend/tests/test_gate02_seed.py (20 tests: seed population, 3 cases verification)
+
+Tests Executed:
+- python -m pytest backend/tests/ -q (84 passed in 10.86s)
+- python -m pytest tests/test_gate01_frontend_build.py -q (6 passed in 0.01s)
+
+Test Result:
+90 passed, 0 failed
+
+Functional Verification:
+- Backend: /api/health → HTTP 200
+  Response: {"status":"healthy","app_name":"GreenFin","environment":"development",
+  "demo_mode":true,"rule_version":"GREENFIN_DEMO_V1","database":"connected",
+  "data_files":18,"farmers_count":3,"timestamp":"2026-08-17T03:35:57.098794+00:00"}
+- Seed data verified: 3 farmers, 18 data files, all relationships valid
+
+Known Issues:
+- pytest-asyncio deprecation warning (cosmetic, non-blocking)
+- SQLAlchemy/Alembic still installed but not used (retained for future option)
+
+Next Recommended Step:
+Start GATE-03 — Document Pipeline (Upload, File Validation, Hash, Storage, Mock OCR,
+Field Extraction, Normalization)
+
+============================================================
+
+============================================================
+AI CHANGE RECORD
+============================================================
+
+Timestamp:
+2026-08-17T12:00:00+08:00
+
+Agent:
+Kiro (Claude) — GreenFin IDE Session
+
+Task:
+GATE-03 — Document Pipeline
+
+Stage:
+GATE-03
+
+Status:
+COMPLETED
+
+Summary:
+Implemented the complete document pipeline: file upload with type/size validation
+and SHA-256 hash deduplication, file storage service, Mock OCR provider with
+Provider/Adapter interface and domain-specific field extraction, field confirmation
+with human correction support, and normalization to StandardizedRecord. All 7 data
+domains supported by MockOCR. Full API endpoints registered. 151 tests pass.
+
+Files Created:
+- backend/app/services/documents/storage.py
+- backend/app/services/documents/upload.py
+- backend/app/services/documents/extraction.py
+- backend/app/services/ocr/provider.py
+- backend/app/api/documents.py
+- backend/tests/test_gate03_upload.py
+- backend/tests/test_gate03_ocr.py
+- backend/tests/test_gate03_extraction.py
+- backend/tests/test_gate03_api.py
+
+Files Modified:
+- backend/app/main.py (registered documents_router and farmer_router)
+
+Files Deleted:
+- None
+
+Files Renamed / Moved:
+- None
+
+Database Changes:
+- Documents, DocumentFields, StandardizedRecords created via JSON repository
+  during upload → OCR → confirm → normalize flow
+
+Business Rule Changes:
+- None. OCR is mock/simulated. Normalization rules (date, amount, area) are
+  straightforward format conversions, not business calculations.
+
+API Changes:
+- POST /api/documents/upload — upload file, validate, hash, store, run OCR
+- GET /api/documents/{id} — get document details
+- GET /api/documents/{id}/fields — get extracted fields
+- POST /api/documents/{id}/confirm — confirm fields with optional corrections
+- POST /api/documents/{id}/normalize — normalize to StandardizedRecord
+- GET /api/documents/{id}/record — get produced StandardizedRecord
+- GET /api/farmers/{id}/documents — list farmer's documents
+
+Tests Added:
+- backend/tests/test_gate03_upload.py (18 tests)
+- backend/tests/test_gate03_ocr.py (9 tests)
+- backend/tests/test_gate03_extraction.py (20 tests)
+- backend/tests/test_gate03_api.py (14 tests)
+
+Tests Executed:
+- python -m pytest backend/tests/ tests/ -v --tb=short
+
+Test Result:
+151 passed in 14.23s
+
+Functional Verification:
+- Live API test: POST /api/documents/upload → 200, 5 OCR fields extracted
+- POST /api/documents/{id}/confirm → 200, status=FIELDS_CONFIRMED
+- POST /api/documents/{id}/normalize → 200, status=NORMALIZED
+- GET /api/farmers/{id}/documents → 200, count=1
+- Full pipeline: Upload → OCR → Confirm → Normalize → StandardizedRecord
+
+Known Issues:
+- None blocking
+
+Next Recommended Step:
+Start GATE-04 — Verification & Anomaly Detection
+
+============================================================
+
+============================================================
+AI CHANGE RECORD
+============================================================
+
+Timestamp:
+2026-08-17T12:30:00+08:00
+
+Agent:
+Kiro (Claude) — GreenFin IDE Session
+
+Task:
+GATE-04 — Verification & Anomaly Detection
+
+Stage:
+GATE-04
+
+Status:
+COMPLETED
+
+Summary:
+Implemented source verification service (V0-V3 determination) with logic for
+expiry detection, OCR confidence downgrade, and invalid record handling. Implemented
+anomaly detection service covering all 8 required types per AGENTS.md §13: EXPIRED,
+FUTURE_DATE, DUPLICATE, OCR_LOW_CONFIDENCE, MISSING_REQUIRED_FIELD, VERIFICATION_FAILED,
+CONFLICT, INVALID_FORMAT. Added review queue for unresolved anomalies and resolve
+endpoint. All 187 tests pass.
+
+Files Created:
+- backend/app/services/verification/verify.py
+- backend/app/services/anomaly/detect.py
+- backend/app/api/verification.py
+- backend/tests/test_gate04_verification.py
+- backend/tests/test_gate04_anomaly.py
+- backend/tests/test_gate04_api.py
+
+Files Modified:
+- backend/app/main.py (registered verification_router)
+
+Files Deleted:
+- None
+
+Files Renamed / Moved:
+- None
+
+Database Changes:
+- VerificationResult and Anomaly records created during verify flow
+- Anomaly resolve updates is_resolved, resolved_by, resolved_at
+
+Business Rule Changes:
+- Verification logic: V3/V2 downgraded to V1 if OCR confidence < 0.5
+- Verification logic: any expired date → V0
+- Verification logic: invalid record → V0
+- Anomaly required fields per domain defined in REQUIRED_FIELDS config
+- Conflict detection: >50% difference in numeric fields within same domain
+
+API Changes:
+- POST /api/documents/{id}/verify — run verification + anomaly detection
+- GET /api/farmers/{id}/anomalies — list all farmer anomalies
+- GET /api/farmers/{id}/review-queue — unresolved anomalies only
+- POST /api/anomalies/{id}/resolve — mark anomaly resolved
+
+Tests Added:
+- backend/tests/test_gate04_verification.py (11 tests)
+- backend/tests/test_gate04_anomaly.py (16 tests)
+- backend/tests/test_gate04_api.py (9 tests)
+
+Tests Executed:
+- python -m pytest backend/tests/ tests/ -q --tb=short
+
+Test Result:
+187 passed in 15.85s
+
+Functional Verification:
+- Backend started, all new endpoints return HTTP 200
+- GET /api/farmers/{id}/review-queue → 200, count field present
+- GET /api/farmers/{id}/anomalies → 200, total/unresolved fields present
+- Document pipeline: upload → confirm → normalize → verify → VERIFIED status
+
+Known Issues:
+- None blocking
+
+Next Recommended Step:
+Start GATE-05 — Rule Engine
+
+============================================================
+
+============================================================
+AI CHANGE RECORD
+============================================================
+
+Timestamp:
+2026-08-17T13:00:00+08:00
+
+Agent:
+Kiro (Claude) — GreenFin IDE Session
+
+Task:
+GATE-05 — Rule Engine
+
+Stage:
+GATE-05
+
+Status:
+COMPLETED
+
+Summary:
+Implemented centralized Rule Engine with typed access to experience, indicator,
+and data health rule configurations. Supports version selection (active vs historical),
+config validation, and calculation trace creation. Updated seed data to include full
+rule config (experience, indicators, data_health). Added API endpoints for rule
+transparency. All 221 tests pass.
+
+Files Created:
+- backend/app/rules/engine.py
+- backend/app/api/rules.py
+- backend/tests/test_gate05_rules.py
+- backend/tests/test_gate05_api.py
+
+Files Modified:
+- backend/app/rules/__init__.py (exports rule engine classes)
+- backend/app/main.py (registered rules_router)
+- backend/app/seed/seed_data.py (expanded RuleSet config with indicators + data_health)
+
+Files Deleted:
+- None
+
+Database Changes:
+- RuleSet config expanded with indicators and data_health sections
+
+Business Rule Changes:
+- Rule Engine provides typed access to GREENFIN_DEMO_V1 config:
+  - Experience: 4 dimensions, 250/dim limit, 1000 total, base values 20/50/100
+  - Source ratios: V3=1.0, V2=1.0, V1=0.5, V0=0.0
+  - Indicator weights, factors, and thresholds
+  - Data Health: priority order, required fields, expiry warning, critical types
+
+API Changes:
+- GET /api/rules — list all rule versions
+- GET /api/rules/active — active rule set with validation
+- GET /api/rules/active/experience — experience rules
+- GET /api/rules/active/indicators — indicator rules
+- GET /api/rules/active/data-health — data health rules
+- GET /api/rules/{version} — specific version
+
+Tests Added:
+- backend/tests/test_gate05_rules.py (27 tests)
+- backend/tests/test_gate05_api.py (7 tests)
+
+Tests Executed:
+- python -m pytest backend/tests/ tests/ -q --tb=short
+
+Test Result:
+221 passed in 16.37s
+
+Functional Verification:
+- All tests pass including rule loading, version selection, typed access,
+  config validation, trace creation, historical preservation, and API endpoints
+
+Known Issues:
+- None blocking
+
+Next Recommended Step:
+Start GATE-06 — Experience Calculation
+
+============================================================
+
+============================================================
+AI CHANGE RECORD
+============================================================
+
+Timestamp:
+2026-08-17T13:30:00+08:00
+
+Agent:
+Kiro (Claude) — GreenFin IDE Session
+
+Task:
+GATE-06 — Experience Calculation
+
+Stage:
+GATE-06
+
+Status:
+COMPLETED
+
+Summary:
+Implemented experience calculation service using rule engine. Supports four
+dimensions (減量/增匯/循環/綠色治理), annual limit per dimension (250), total
+limit (1000), source recognition ratio from evidence verification, duplicate
+protection, level determination (L0-L5), and full calculation traceability.
+Added farmer experience summary, history, and recalculation endpoints.
+All 245 tests pass.
+
+Files Created:
+- backend/app/services/experience/calculate.py
+- backend/app/api/experience.py
+- backend/tests/test_gate06_experience.py
+- backend/tests/test_gate06_api.py
+
+Files Modified:
+- backend/app/main.py (registered experience_router)
+
+Files Deleted:
+- None
+
+Database Changes:
+- ExperienceTransaction records created during calculation
+
+Business Rule Changes:
+- Experience calculation formula implemented:
+  effective_value = base_value × source_recognition_ratio
+- Source ratio determined by lowest verification level in evidence
+- Annual dimension limit enforced (caps at 250)
+- Total limit enforced (caps at 1000)
+- Duplicate protection: same green_action_id cannot be calculated twice
+
+API Changes:
+- POST /api/experience/calculate — calculate for a green action
+- GET /api/farmers/{id}/experience — summary (total, dimensions, level)
+- GET /api/farmers/{id}/experience/history — transaction list
+- POST /api/farmers/{id}/experience/recalculate — rebuild from scratch
+
+Tests Added:
+- backend/tests/test_gate06_experience.py (18 tests)
+- backend/tests/test_gate06_api.py (6 tests)
+
+Tests Executed:
+- python -m pytest backend/tests/ tests/ -q --tb=short
+
+Test Result:
+245 passed in 14.20s
+
+Functional Verification:
+- All calculation tests pass with controlled test data
+- Base values: BASIC=20, SUSTAINED=50, CERTIFIED=100 verified
+- Source ratios: V3=1.0, V1=0.5, V0=0.0 verified
+- Dimension limit caps at 250 verified
+- Duplicate rejection verified
+- Level determination verified (L0-L5)
+- Recalculation rebuilds correctly
+
+Known Issues:
+- None blocking
+
+Next Recommended Step:
+Start GATE-07 — Four Indicators
+
+============================================================
+
+============================================================
+AI CHANGE RECORD
+============================================================
+
+Timestamp:
+2026-08-17T14:00:00+08:00
+
+Agent:
+Kiro (Claude) — GreenFin IDE Session
+
+Task:
+GATE-07 — Four Indicators
+
+Stage:
+GATE-07
+
+Status:
+COMPLETED
+
+Summary:
+Implemented all four independent analysis indicators using rule-driven calculations:
+1. 資料完整度 (Completeness) — weighted domain coverage scoring
+2. 資料可信度 (Credibility) — source levels, anomalies, traceability
+3. 經營成熟度 (Business Maturity) — variety, volume, documents, transactions
+4. 綠色成熟度 (Green Maturity) — experience value, dimension breadth, V2/V3 ratio
+Each indicator is scored 0-100, leveled L1-L5, with full calculation trace.
+Per AGENTS.md §4.2: indicators are presented independently, never combined.
+All 268 tests pass.
+
+Files Created:
+- backend/app/services/indicators/calculate.py
+- backend/app/api/indicators.py
+- backend/tests/test_gate07_indicators.py
+- backend/tests/test_gate07_api.py
+
+Files Modified:
+- backend/app/main.py (registered indicators_router)
+
+Files Deleted:
+- None
+
+Database Changes:
+- IndicatorResult records created/replaced during calculation
+
+Business Rule Changes:
+- Completeness: domain weights (core=3, important=2, supplementary=1), L1-L5 thresholds
+- Credibility: source level scoring (V0=0, V1=33, V2=67, V3=100), anomaly penalty (-5 each, max -30), traceability bonus (max 10)
+- Business Maturity: variety (max 40), volume log scale (max 30), docs (max 20), transaction bonus (10)
+- Green Maturity: experience contribution (max 40 scaled to 1000), breadth (10/dim), quality V2/V3 (max 20)
+
+API Changes:
+- GET /api/farmers/{id}/indicators — get current results
+- POST /api/farmers/{id}/indicators/calculate — recalculate all four
+
+Tests Added:
+- backend/tests/test_gate07_indicators.py (20 tests)
+- backend/tests/test_gate07_api.py (5 tests)
+
+Tests Executed:
+- python -m pytest backend/tests/ tests/ -q --tb=short
+
+Test Result:
+268 passed in 15.23s
+
+Functional Verification:
+- All indicator calculations produce valid 0-100 scores
+- Level determination L1-L5 correct
+- Calculation traces preserved with rule_version
+- Indicators remain independent (not combined)
+- API returns structured indicator data
+
+Known Issues:
+- None blocking
+
+Next Recommended Step:
+Start GATE-08 — Data Health
+
+============================================================
+
+============================================================
+AI CHANGE RECORD
+============================================================
+
+Timestamp:
+2026-08-17T14:30:00+08:00
+
+Agent:
+Kiro (Claude) — GreenFin IDE Session
+
+Task:
+GATE-08 — Data Health
+
+Stage:
+GATE-08
+
+Status:
+COMPLETED
+
+Summary:
+Implemented per-domain Data Health assessment with priority-based status
+determination (GRAY → RED → YELLOW → GREEN). Each domain assessed independently
+with reasons and recommended actions. Covers all 7 data domains. Uses rule
+engine for required fields and expiry warning configuration.
+All 285 tests pass.
+
+Files Created:
+- backend/app/services/data_health/calculate.py
+- backend/app/api/data_health.py
+- backend/tests/test_gate08_data_health.py
+- backend/tests/test_gate08_api.py
+
+Files Modified:
+- backend/app/main.py (registered data_health_router)
+
+Files Deleted:
+- None
+
+Business Rule Changes:
+- Data Health priority logic:
+  1. No data → GRAY
+  2. Critical anomaly / V0 / invalid / missing required → RED
+  3. Warning anomaly / expiring soon / V1 only → YELLOW
+  4. All conditions met → GREEN
+- Per-domain required fields from rule config
+- Expiry warning threshold: 90 days
+
+API Changes:
+- GET /api/farmers/{id}/data-health — per-domain status with reasons/actions
+- POST /api/farmers/{id}/data-health/calculate — recalculate all domains
+
+Tests Added:
+- backend/tests/test_gate08_data_health.py (15 tests)
+- backend/tests/test_gate08_api.py (4 tests)
+
+Test Result:
+285 passed in 16.10s
+
+Known Issues:
+- None blocking
+
+Next Recommended Step:
+Start GATE-09 — Farmer Workflow (Dashboard, Documents, full UI flow)
+
+============================================================
+
+============================================================
+AI CHANGE RECORD
+============================================================
+
+Timestamp:
+2026-08-17T15:00:00+08:00
+
+Agent:
+Kiro (Claude) — GreenFin IDE Session
+
+Task:
+GATE-09 — Farmer Workflow
+
+Stage:
+GATE-09
+
+Status:
+COMPLETED
+
+Summary:
+Implemented the farmer-facing frontend UI with React Router, including:
+- Dashboard: experience summary, four indicators, data health overview, review queue
+- Documents: upload with domain selection, process pipeline (confirm→normalize→verify), field viewer
+- Experience: total/per-dimension display, level, calculation history with traces
+- Indicators: independent scoring with progress bars, recalculate button
+- Data Health: per-domain GREEN/YELLOW/RED/GRAY cards with reasons and actions
+- Layout: sidebar navigation, header with farmer info
+- API client module for all backend endpoints
+Frontend builds cleanly (tsc + vite). All 285 tests pass.
+
+Files Created:
+- frontend/src/api.ts
+- frontend/src/components/Layout.tsx
+- frontend/src/pages/Dashboard.tsx
+- frontend/src/pages/Documents.tsx
+- frontend/src/pages/Experience.tsx
+- frontend/src/pages/Indicators.tsx
+- frontend/src/pages/DataHealth.tsx
+
+Files Modified:
+- frontend/src/App.tsx (rewrote with React Router and page components)
+
+Files Deleted:
+- None
+
+Database Changes:
+- None
+
+Business Rule Changes:
+- None (frontend only displays, does not calculate — per AGENTS.md §15)
+
+API Changes:
+- None (uses existing endpoints)
+
+Tests Added:
+- None (GATE-09 is frontend workflow; verified via build + existing tests)
+
+Tests Executed:
+- python -m pytest backend/tests/ tests/ -q --tb=short
+- Frontend: tsc -b + vite build
+
+Test Result:
+285 passed in 16.29s. Frontend build successful.
+
+Functional Verification:
+- TypeScript compilation: 0 errors
+- Vite production build: dist/ generated with assets
+- React Router routes: /, /documents, /experience, /indicators, /data-health
+- All pages use API client to call backend endpoints
+- Layout with sidebar navigation
+
+Known Issues:
+- Demo uses hardcoded farmer_id "farmer-a-chen" (sufficient for demo)
+- No login system yet (GATE-10 authorization handles access control)
+
+Next Recommended Step:
+Start GATE-10 — Authorization
+
+============================================================
+
+============================================================
+AI CHANGE RECORD
+============================================================
+
+Timestamp:
+2026-08-17T15:30:00+08:00
+
+Agent:
+Kiro (Claude) — GreenFin IDE Session
+
+Task:
+GATE-10 — Authorization
+
+Stage:
+GATE-10
+
+Status:
+COMPLETED
+
+Summary:
+Implemented authorization service with grant, revoke, check, and expiry enforcement.
+Bank access guard (require_bank_authorization) raises HTTP 403 when authorization is
+missing, expired, or revoked — enforced at backend level per AGENTS.md §17. Bank
+data access endpoint demonstrates the full flow: authorized bank sees data, unauthorized
+gets 403. All 310 tests pass.
+
+Files Created:
+- backend/app/services/authorization/service.py
+- backend/app/services/authorization/guard.py
+- backend/app/api/authorization.py
+- backend/tests/test_gate10_authorization.py
+- backend/tests/test_gate10_api.py
+
+Files Modified:
+- backend/app/main.py (registered authorization_router)
+
+Files Deleted:
+- None
+
+Business Rule Changes:
+- Authorization grant: one active auth per farmer-institution pair
+- Authorization check: validates status=ACTIVE, not expired, within start time, scope match
+- Auto-expire: checks expire_at against current time
+- Bank guard: raises 403 if check_authorization returns None
+
+API Changes:
+- POST /api/authorizations/grant — create authorization
+- POST /api/authorizations/{id}/revoke — revoke
+- GET /api/farmers/{id}/authorizations — farmer's list
+- GET /api/banks/{id}/authorizations — bank's list
+- POST /api/authorizations/check — verify access
+- GET /api/bank/{id}/farmer/{id}/data — bank data access (guarded)
+
+Tests Added:
+- backend/tests/test_gate10_authorization.py (14 tests)
+- backend/tests/test_gate10_api.py (11 tests)
+
+Test Result:
+310 passed in 16.85s
+
+Known Issues:
+- None blocking
+
+Next Recommended Step:
+Start GATE-11 — Bank Workflow
+
+============================================================

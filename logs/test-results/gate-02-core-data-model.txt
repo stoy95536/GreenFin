@@ -1,0 +1,65 @@
+GREENFIN DEVELOPMENT TEST RECORD
+
+Gate:
+GATE-02 — Core Data Model
+
+Timestamp:
+2026-08-17T11:40:00+08:00
+
+Test Scope:
+Domain model validation, JSON repository CRUD, seed data integrity, health endpoint,
+configuration, and frontend build (regression).
+
+Commands:
+- python -m pytest backend/tests/ -q
+- python -m pytest tests/test_gate01_frontend_build.py -q
+
+Tests Executed:
+
+Backend (84 tests):
+- test_gate01_config.py (5 tests): PASSED
+- test_gate01_database.py (4 tests): PASSED
+- test_gate01_health.py (7 tests): PASSED
+- test_gate01_migration.py (5 tests): PASSED
+- test_gate02_models.py (24 tests): PASSED
+  - TestEntityBase (4): auto ID, auto timestamp, touch, explicit ID
+  - TestUserModels (4): required fields, enums, farmer profile, bank
+  - TestFarmModels (2): farm creation, crop creation
+  - TestDocumentModels (4): defaults, confidence range, invalid confidence, record
+  - TestVerificationModels (2): verification result, anomaly types
+  - TestGreenActionModels (3): green action, experience transaction, ratio bounds
+  - TestIndicatorModels (4): indicator result, score bounds, data health, reasons list
+  - TestAuthorizationModels (3): rule set, authorization, bank case
+  - TestAuditLog (1): audit log creation
+- test_gate02_repository.py (16 tests): PASSED
+  - TestRepositoryCRUD (10): create, duplicate prevention, get, getAll, update, delete, exists, count
+  - TestRepositoryQuery (4): find_by single/multiple, find_one_by, not found
+  - TestRepositoryRelationships (2): farmer→user, farm→farmer
+- test_gate02_seed.py (20 tests): PASSED
+  - TestSeedDataPopulation (13): counts for all entity types
+  - TestSeedDataCases (7): Case A/B/C existence and data health colors
+
+Frontend (6 tests):
+- test_gate01_frontend_build.py (6 tests): PASSED
+
+Passed:
+90
+
+Failed:
+0
+
+Warnings:
+- pytest-asyncio deprecation warning (cosmetic)
+
+Functional Verification:
+- Backend started on port 8001 (8000 occupied by previous session)
+- GET /api/health → HTTP 200
+- Response confirms: database=connected, data_files=18, farmers_count=3
+- Seed script runs cleanly: all 18 entity types populated
+- 3 demo cases verified: Case A (GREEN), Case B (YELLOW), Case C (RED)
+
+Known Issues:
+- None blocking
+
+FINAL GATE STATUS:
+PASS

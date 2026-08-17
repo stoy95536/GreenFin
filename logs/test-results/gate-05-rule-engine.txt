@@ -1,0 +1,54 @@
+GREENFIN DEVELOPMENT TEST RECORD
+
+Gate:
+GATE-05 — Rule Engine
+
+Timestamp:
+2026-08-17T13:00:00+08:00
+
+Test Scope:
+Rule loading, version selection, typed config access, calculation trace,
+config validation, historical preservation, API endpoints.
+
+Commands:
+- python -m pytest backend/tests/ tests/ -q --tb=short
+
+Tests Executed:
+
+GATE-05 New Tests (34):
+- test_gate05_rules.py (27 tests): PASSED
+  - TestRuleLoading (6): active, specific version, nonexistent, no active, rule_set, config
+  - TestExperienceRules (6): dimensions, annual limit, total limit, base values, source ratios, levels
+  - TestIndicatorRules (3): weights, factors, thresholds
+  - TestDataHealthRules (4): priority, domain fields, expiry days, critical types
+  - TestCalculationTrace (4): version, timestamp, evidence IDs, text
+  - TestConfigValidation (3): valid config, missing experience, missing base values
+  - TestHistoricalPreservation (1): multiple versions coexist
+- test_gate05_api.py (7 tests): PASSED
+  - TestRulesListEndpoint (1): list versions
+  - TestActiveRulesEndpoint (4): active rules, experience, indicators, data health
+  - TestVersionEndpoint (2): specific version, nonexistent 404
+
+Regression Tests (187):
+- GATE-01 through GATE-04: PASSED
+
+Passed:
+221
+
+Failed:
+0
+
+Warnings:
+- pytest-asyncio deprecation warning (cosmetic)
+
+Functional Verification:
+- All rule engine tests pass with controlled test data
+- Config validation catches missing sections
+- Multiple versions can coexist without overwriting
+- API endpoints return correct structured data
+
+Known Issues:
+- None blocking
+
+FINAL GATE STATUS:
+PASS

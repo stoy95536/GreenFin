@@ -1,0 +1,64 @@
+GREENFIN DEVELOPMENT TEST RECORD
+
+Gate:
+GATE-01 — Project Foundation
+
+Timestamp:
+2026-08-17T11:12:00+08:00
+
+Test Scope:
+Backend startup, database connection, migration framework, configuration, frontend build.
+
+Commands:
+- python -m pytest backend/tests/ tests/test_gate01_frontend_build.py -q
+
+Tests Executed:
+- test_gate01_config.py::test_settings_app_name                    PASSED
+- test_gate01_config.py::test_settings_database_url                PASSED
+- test_gate01_config.py::test_settings_demo_mode                   PASSED
+- test_gate01_config.py::test_settings_rule_version                PASSED
+- test_gate01_config.py::test_settings_timezone                    PASSED
+- test_gate01_database.py::test_database_engine_connects           PASSED
+- test_gate01_database.py::test_sqlite_foreign_keys_enabled        PASSED
+- test_gate01_database.py::test_session_rollback_isolation         PASSED
+- test_gate01_database.py::test_database_url_is_sqlite             PASSED
+- test_gate01_health.py::test_health_endpoint_returns_200          PASSED
+- test_gate01_health.py::test_health_response_has_required_fields  PASSED
+- test_gate01_health.py::test_health_reports_healthy_status        PASSED
+- test_gate01_health.py::test_health_app_name_is_greenfin          PASSED
+- test_gate01_health.py::test_health_database_connected            PASSED
+- test_gate01_health.py::test_health_rule_version                  PASSED
+- test_gate01_health.py::test_health_demo_mode_enabled             PASSED
+- test_gate01_migration.py::test_alembic_config_loads              PASSED
+- test_gate01_migration.py::test_alembic_script_directory_exists   PASSED
+- test_gate01_migration.py::test_initial_migration_exists          PASSED
+- test_gate01_migration.py::test_migration_head_is_001             PASSED
+- test_gate01_migration.py::test_initial_migration_has_no_down_revision  PASSED
+- test_gate01_frontend_build.py::test_package_json_exists          PASSED
+- test_gate01_frontend_build.py::test_package_json_is_valid        PASSED
+- test_gate01_frontend_build.py::test_source_files_exist           PASSED
+- test_gate01_frontend_build.py::test_dist_directory_exists        PASSED
+- test_gate01_frontend_build.py::test_dist_index_html_exists       PASSED
+- test_gate01_frontend_build.py::test_dist_has_assets              PASSED
+
+Passed:
+27
+
+Failed:
+0
+
+Warnings:
+- pytest-asyncio deprecation warning (cosmetic, non-blocking)
+
+Functional Verification:
+- Backend uvicorn server started on 127.0.0.1:8000
+- GET /api/health returned HTTP 200 with all required fields
+- Database reported as "connected"
+- SQLite file greenfin_demo.db created (4096 bytes)
+- Frontend dist/index.html contains "GreenFin" title and bundled assets
+
+Known Issues:
+- None blocking
+
+FINAL GATE STATUS:
+PASS

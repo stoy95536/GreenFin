@@ -21,6 +21,7 @@ Thumbs.db
 # Env
 .env
 .env.*
+backend/.env
 
 # Keep example
 !.env.example
@@ -41,5 +42,13 @@ Thumbs.db
 *.sqlite
 *.sqlite3
 *.db
+*.db-shm
+*.db-wal
 coverage/
 htmlcov/
+
+# Uploads (demo generated files)
+backend/uploads/
+
+# Root package-lock (not a workspace)
+/package-lock.json

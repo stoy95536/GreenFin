@@ -1,0 +1,61 @@
+GREENFIN DEVELOPMENT TEST RECORD
+
+Gate:
+GATE-04 — Verification & Anomaly Detection
+
+Timestamp:
+2026-08-17T12:30:00+08:00
+
+Test Scope:
+Source verification (V0-V3), anomaly detection (8 types), review queue, resolve flow, API endpoints.
+
+Commands:
+- python -m pytest backend/tests/ tests/ -q --tb=short
+
+Tests Executed:
+
+GATE-04 New Tests (36):
+- test_gate04_verification.py (11 tests): PASSED
+  - TestVerificationLevels (7): V3 preserved, V2 preserved, V1, expired→V0, invalid→V0, low confidence→V1, no doc→V0
+  - TestVerificationResult (4): has reason, has evidence IDs, persisted, no document
+- test_gate04_anomaly.py (16 tests): PASSED
+  - TestExpiredAnomaly (3): detected, severity critical, valid no trigger
+  - TestFutureDateAnomaly (2): far future detected, normal ok
+  - TestDuplicateAnomaly (1): same hash detected
+  - TestOCRLowConfidence (2): low detected, good no trigger
+  - TestMissingRequiredField (2): missing detected, all present ok
+  - TestVerificationFailed (2): V0 triggers, V2 no trigger
+  - TestInvalidFormat (2): invalid date detected, valid ok
+  - TestReviewQueue (1): returns unresolved only
+- test_gate04_api.py (9 tests): PASSED
+  - TestVerifyEndpoint (6): returns 200, verifications, anomalies list, updates status, no records 400, nonexistent 404
+  - TestAnomaliesEndpoint (1): get farmer anomalies
+  - TestReviewQueueEndpoint (1): endpoint works
+  - TestResolveEndpoint (3): resolve ok, nonexistent 404, already resolved 400
+
+Regression Tests (151):
+- GATE-01 tests (21): PASSED
+- GATE-02 tests (63): PASSED
+- GATE-03 tests (61): PASSED
+- Frontend build tests (6): PASSED
+
+Passed:
+187
+
+Failed:
+0
+
+Warnings:
+- pytest-asyncio deprecation warning (cosmetic)
+
+Functional Verification:
+- Backend started on port 8001
+- GET /api/farmers/farmer-a-chen/review-queue → 200, count=0 (healthy case)
+- GET /api/farmers/farmer-c-wang/anomalies → 200, structured response
+- Full pipeline verified through automated tests: upload → confirm → normalize → verify → anomalies detected
+
+Known Issues:
+- None blocking
+
+FINAL GATE STATUS:
+PASS

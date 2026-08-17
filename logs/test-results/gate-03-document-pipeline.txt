@@ -1,0 +1,64 @@
+GREENFIN DEVELOPMENT TEST RECORD
+
+Gate:
+GATE-03 — Document Pipeline
+
+Timestamp:
+2026-08-17T12:00:00+08:00
+
+Test Scope:
+Document upload, file validation, hash deduplication, Mock OCR extraction,
+field confirmation, normalization, StandardizedRecord creation, API endpoints.
+
+Commands:
+- python -m pytest backend/tests/ tests/ -v --tb=short
+
+Tests Executed:
+
+GATE-03 New Tests (61):
+- test_gate03_upload.py (18 tests): PASSED
+  - TestFileValidation (9): valid/invalid types, size limits
+  - TestFileHash (3): deterministic, different content, SHA-256 length
+  - TestUploadService (6): valid upload, persist, invalid type, duplicate, storage, source level
+- test_gate03_ocr.py (9 tests): PASSED
+  - TestOCRProviderInterface (2): interface compliance, factory
+  - TestMockOCRExtraction (7): domain fields, all domains, confidence, provider name, raw text
+- test_gate03_extraction.py (20 tests): PASSED
+  - TestRunOCR (6): creates fields, updates status, document_id, confidence, source, not corrected
+  - TestConfirmFields (2): without/with corrections
+  - TestNormalization (9): date formats, amounts, area, plain text, empty
+  - TestNormalizeDocument (5): creates record, updates status, persists, normalized values, nonexistent
+- test_gate03_api.py (14 tests): PASSED
+  - TestUploadEndpoint (4): valid PDF, invalid type, invalid domain, duplicate
+  - TestDocumentEndpoints (6): get, not found, fields, confirm, normalize, record
+  - TestFarmerDocumentsEndpoint (2): list, empty
+
+Regression Tests (90):
+- GATE-01 tests (21): PASSED
+- GATE-02 tests (63): PASSED
+- Frontend build tests (6): PASSED
+
+Passed:
+151
+
+Failed:
+0
+
+Warnings:
+- pytest-asyncio deprecation warning (cosmetic)
+
+Functional Verification:
+- Backend started on port 8001
+- Full pipeline via live API:
+  1. POST /api/documents/upload → 200, doc created, 5 OCR fields
+  2. POST /api/documents/{id}/confirm → 200, FIELDS_CONFIRMED
+  3. POST /api/documents/{id}/normalize → 200, NORMALIZED
+  4. GET /api/farmers/{id}/documents → 200, count=1, status=NORMALIZED
+- File stored on disk in uploads/ directory
+- Document status transitions: UPLOADED → OCR_COMPLETED → FIELDS_CONFIRMED → NORMALIZED
+
+Known Issues:
+- None blocking
+
+FINAL GATE STATUS:
+PASS

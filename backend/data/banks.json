@@ -1,0 +1,10 @@
+[
+  {
+    "id": "bank-taishin",
+    "created_at": "2026-08-17T05:02:13.914687+00:00",
+    "updated_at": null,
+    "code": "812",
+    "name": "台新國際商業銀行 (DEMO)",
+    "contact_email": "demo@taishinbank.example"
+  }
+]

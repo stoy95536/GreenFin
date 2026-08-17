@@ -1,0 +1,30 @@
+[
+  {
+    "id": "audit-001",
+    "created_at": "2026-08-17T05:02:14.306257+00:00",
+    "updated_at": null,
+    "event_type": "AUTHORIZATION_GRANTED",
+    "actor_id": "user-farmer-a",
+    "target_id": "auth-a-to-bank",
+    "target_type": "Authorization",
+    "details": {
+      "institution": "台新銀行",
+      "purpose": "農業設備貸款"
+    },
+    "ip_address": null
+  },
+  {
+    "id": "audit-002",
+    "created_at": "2026-08-17T05:02:14.306577+00:00",
+    "updated_at": null,
+    "event_type": "BANK_DATA_ACCESSED",
+    "actor_id": "user-bank-001",
+    "target_id": "farmer-a-chen",
+    "target_type": "FarmerProfile",
+    "details": {
+      "case": "DEMO-2026-001",
+      "action": "查看四大指標"
+    },
+    "ip_address": null
+  }
+]

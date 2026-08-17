@@ -1,0 +1,39 @@
+GREENFIN DEVELOPMENT TEST RECORD
+
+Gate:
+GATE-09 — Farmer Workflow
+
+Timestamp:
+2026-08-17T15:00:00+08:00
+
+Test Scope:
+Frontend build verification, backend regression tests, farmer UI pages.
+
+Commands:
+- tsc -b (TypeScript compilation)
+- vite build (production bundle)
+- python -m pytest backend/tests/ tests/ -q --tb=short
+
+Tests Executed:
+- All backend tests (285): PASSED
+- Frontend TypeScript: 0 errors
+- Frontend Vite build: dist/ created successfully
+
+Passed:
+285
+
+Failed:
+0
+
+Functional Verification:
+- Frontend builds with no errors
+- 5 pages created: Dashboard, Documents, Experience, Indicators, DataHealth
+- Layout with sidebar navigation
+- API client connects to all backend endpoints
+- Farmer workflow flow: Dashboard → Upload → Process → View Results
+
+Known Issues:
+- Demo uses hardcoded farmer_id (acceptable for demo)
+
+FINAL GATE STATUS:
+PASS

@@ -1,0 +1,40 @@
+GREENFIN DEVELOPMENT TEST RECORD
+
+Gate:
+GATE-10 — Authorization
+
+Timestamp:
+2026-08-17T15:30:00+08:00
+
+Test Scope:
+Authorization grant, revoke, check, expiry enforcement, bank access guard, API endpoints.
+
+Commands:
+- python -m pytest backend/tests/ tests/ -q --tb=short
+
+Tests Executed:
+
+GATE-10 New Tests (25):
+- test_gate10_authorization.py (14 tests): PASSED
+  - TestGrantAuthorization (3): creates, duplicate raises, persists
+  - TestRevokeAuthorization (3): changes status, nonexistent raises, already revoked raises
+  - TestCheckAuthorization (6): valid returns auth, unauthorized none, expired none, revoked none, scope pass, scope fail
+  - TestBankAccessGuard (3): authorized passes, unauthorized 403, expired 403
+- test_gate10_api.py (11 tests): PASSED
+  - TestGrantEndpoint (2): success, duplicate 400
+  - TestRevokeEndpoint (1): success
+  - TestListEndpoints (2): farmer list, bank list
+  - TestCheckEndpoint (2): authorized true, unauthorized false
+  - TestBankAccessEndpoint (3): authorized gets data, unauthorized 403, revoked 403
+
+Regression Tests (285):
+- GATE-01 through GATE-09: PASSED
+
+Passed:
+310
+
+Failed:
+0
+
+FINAL GATE STATUS:
+PASS

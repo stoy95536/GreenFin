@@ -1,0 +1,42 @@
+GREENFIN DEVELOPMENT TEST RECORD
+
+Gate:
+GATE-06 — Experience Calculation
+
+Timestamp:
+2026-08-17T13:30:00+08:00
+
+Test Scope:
+Experience calculation (base value, source ratio, limits, levels, duplicates, trace), API endpoints.
+
+Commands:
+- python -m pytest backend/tests/ tests/ -q --tb=short
+
+Tests Executed:
+
+GATE-06 New Tests (24):
+- test_gate06_experience.py (18 tests): PASSED
+  - TestBaseValueCalculation (3): BASIC=20, SUSTAINED=50, CERTIFIED=100
+  - TestSourceRatio (3): no evidence→V1, V3→1.0, V0→0.0
+  - TestDimensionLimit (2): within limit, capped at 250
+  - TestDuplicateProtection (1): duplicate raises
+  - TestLevelDetermination (3): L0, L1, L3
+  - TestTraceability (4): rule version, timestamp, text, evidence IDs
+  - TestRecalculate (1): clears and rebuilds
+- test_gate06_api.py (6 tests): PASSED
+  - TestCalculateEndpoint (3): success, nonexistent, duplicate
+  - TestSummaryEndpoint (2): empty, after calculation
+  - TestHistoryEndpoint (1): history list
+  - TestRecalculateEndpoint (1): recalculate
+
+Regression Tests (221):
+- GATE-01 through GATE-05: PASSED
+
+Passed:
+245
+
+Failed:
+0
+
+FINAL GATE STATUS:
+PASS

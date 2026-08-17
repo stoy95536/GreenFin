@@ -1,0 +1,72 @@
+[
+  {
+    "id": "doc-a1-cert",
+    "created_at": "2026-08-17T05:02:13.949200+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-a-chen",
+    "filename": "有機認證書_2026.pdf",
+    "file_hash": "abc123def456",
+    "file_path": null,
+    "mime_type": null,
+    "domain": "CERTIFICATION",
+    "source_level": "V3",
+    "status": "VERIFIED",
+    "upload_note": null
+  },
+  {
+    "id": "doc-a2-invoice",
+    "created_at": "2026-08-17T05:02:13.949727+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-a-chen",
+    "filename": "農會出貨單_202601.pdf",
+    "file_hash": "def789ghi012",
+    "file_path": null,
+    "mime_type": null,
+    "domain": "TRANSACTION",
+    "source_level": "V2",
+    "status": "VERIFIED",
+    "upload_note": null
+  },
+  {
+    "id": "doc-b1-photo",
+    "created_at": "2026-08-17T05:02:13.957251+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-b-lin",
+    "filename": "堆肥照片_20260315.jpg",
+    "file_hash": "jkl345mno678",
+    "file_path": null,
+    "mime_type": null,
+    "domain": "GREEN_ACTION",
+    "source_level": "V1",
+    "status": "FIELDS_CONFIRMED",
+    "upload_note": null
+  },
+  {
+    "id": "doc-c1-expired",
+    "created_at": "2026-08-17T05:02:13.962784+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-c-wang",
+    "filename": "過期農藥證明_2023.pdf",
+    "file_hash": "pqr901stu234",
+    "file_path": null,
+    "mime_type": null,
+    "domain": "CERTIFICATION",
+    "source_level": "V0",
+    "status": "UPLOADED",
+    "upload_note": null
+  },
+  {
+    "id": "doc-c2-duplicate",
+    "created_at": "2026-08-17T05:02:13.970163+00:00",
+    "updated_at": null,
+    "farmer_id": "farmer-c-wang",
+    "filename": "過期農藥證明_2023_copy.pdf",
+    "file_hash": "pqr901stu234",
+    "file_path": null,
+    "mime_type": null,
+    "domain": "CERTIFICATION",
+    "source_level": "V0",
+    "status": "UPLOADED",
+    "upload_note": null
+  }
+]
